@@ -1,13 +1,15 @@
-package com.example.taskmanager
+package com.example.taskmanager.data.local.database
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.example.taskmanager.data.local.dao.Dao
+import com.example.taskmanager.data.local.entity.Task
 
 @Database(
-    entities = [Tasks::class],
+    entities = [Task::class],
     version = 1,
     exportSchema = false
 )
@@ -25,7 +27,7 @@ abstract class MainDb : RoomDatabase() {
                 INSTANCE ?: Room.databaseBuilder(
                     context.applicationContext,
                     MainDb::class.java,
-                    "Task.db"
+                    "task.db"
                 ).build().also {
                     INSTANCE = it
                 }

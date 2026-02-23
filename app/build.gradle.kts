@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
 
 }
 
@@ -44,6 +45,12 @@ android {
 
 dependencies {
     val room_version = "2.8.4"
+
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+
+    // Для Compose
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     implementation("androidx.room:room-runtime:$room_version")
 

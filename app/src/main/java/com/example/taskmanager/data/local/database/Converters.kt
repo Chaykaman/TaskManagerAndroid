@@ -1,6 +1,8 @@
-package com.example.taskmanager
+package com.example.taskmanager.data.local.database
 
 import androidx.room.TypeConverter
+import com.example.taskmanager.data.local.entity.Priority
+import com.example.taskmanager.data.local.entity.Status
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
