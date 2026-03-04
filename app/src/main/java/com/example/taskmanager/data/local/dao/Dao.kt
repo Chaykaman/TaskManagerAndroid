@@ -173,7 +173,7 @@ interface Dao {
     @Query("DELETE FROM tasks WHERE isCompleted = 1")
     suspend fun deleteAllCompleted()
     //Полное удаление записей из базы
-    @Query("DELETE FROM tasks")
-    suspend fun deleteAll()
+//    @Query("DELETE FROM tasks")
+//    suspend fun deleteAll()
 
 }
