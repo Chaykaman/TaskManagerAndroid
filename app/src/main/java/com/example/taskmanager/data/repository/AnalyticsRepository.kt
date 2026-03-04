@@ -3,6 +3,7 @@ package com.example.taskmanager.data.repository
 import com.example.taskmanager.data.local.dao.Dao
 import com.example.taskmanager.data.local.entity.Priority
 import com.example.taskmanager.data.local.entity.Status
+import com.example.taskmanager.data.logger.TaskLogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
@@ -15,40 +16,54 @@ class AnalyticsRepository @Inject constructor(
     private val taskDao: Dao
 ) {
 
+    init {
+        TaskLogger.i("AnalyticsRepository создан")
+    }
+
     // ========== ОБЩАЯ СТАТИСТИКА ==========
 
-    //Всего задач
     suspend fun totalCount(): Int = withContext(Dispatchers.IO) {
-        taskDao.countTotal()
+        TaskLogger.d("Подсчёт общего количества задач")
+        val count = taskDao.countTotal()
+        TaskLogger.d("Всего задач: $count")
+        count
     }
 
-    /** Активных / Выполненных */
     suspend fun completionStats(): Pair<Int, Int> = withContext(Dispatchers.IO) {
-        taskDao.countActive() to taskDao.countCompleted()
+        TaskLogger.d("Подсчёт статистики выполнения")
+        val active = taskDao.countActive()
+        val completed = taskDao.countCompleted()
+        TaskLogger.d("Активных: $active, Выполненных: $completed")
+        active to completed
     }
 
-    //Процент выполненых задач
     suspend fun completionRate(): Float = withContext(Dispatchers.IO) {
         val total = taskDao.countTotal()
-        if (total == 0) 0f else taskDao.countCompleted() * 100f / total
+        val rate = if (total == 0) 0f else taskDao.countCompleted() * 100f / total
+        TaskLogger.d("Процент выполнения: $rate%")
+        rate
     }
 
     // ========== РАСПРЕДЕЛЕНИЕ ==========
 
-    // По статусу
     suspend fun distributionByStatus(): Map<Status, Int> = withContext(Dispatchers.IO) {
-        Status.values().associateWith { taskDao.countByStatus(it) }
+        TaskLogger.d("Распределение по статусам")
+        val map = Status.values().associateWith { taskDao.countByStatus(it) }
+        TaskLogger.d("По статусам: $map")
+        map
     }
 
-    // По приоретеам
     suspend fun distributionByPriority(): Map<Priority, Int> = withContext(Dispatchers.IO) {
-        Priority.values().associateWith { taskDao.countByPriority(it) }
+        TaskLogger.d("Распределение по приоритетам")
+        val map = Priority.values().associateWith { taskDao.countByPriority(it) }
+        TaskLogger.d("По приоритетам: $map")
+        map
     }
 
     // ========== ПРОДУКТИВНОСТЬ ==========
 
-    //Выполнено за период
     suspend fun completedInPeriod(days: Int): List<Pair<LocalDate, Int>> = withContext(Dispatchers.IO) {
+        TaskLogger.d("Анализ продуктивности за $days дней")
         val result = mutableListOf<Pair<LocalDate, Int>>()
         val today = LocalDate.now()
 
@@ -59,11 +74,15 @@ class AnalyticsRepository @Inject constructor(
             val count = taskDao.countCompletedInPeriod(start, end)
             result.add(date to count)
         }
+
+        TaskLogger.d("Продуктивность: ${result.size} записей")
         result
     }
 
-    //Среднее время задачи в часах
     suspend fun averageCompletionTime(): Float? = withContext(Dispatchers.IO) {
-        taskDao.getAverageCompletionTime()?.times(24) // дни → часы
+        TaskLogger.d("Расчёт среднего времени выполнения")
+        val hours = taskDao.getAverageCompletionTime()?.times(24)
+        TaskLogger.d("Среднее время: ${hours ?: "N/A"} часов")
+        hours
     }
 }
