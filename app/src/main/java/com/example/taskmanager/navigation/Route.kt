@@ -5,13 +5,18 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.Menu
 import androidx.navigation3.runtime.NavKey
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
+import java.time.LocalDate
 
 @Serializable
 sealed interface Route: NavKey {
     @Serializable data object Tasks: Route
     @Serializable data object Calendar: Route
-    @Serializable data object Menu : Route
+    @Serializable data object Menu: Route
+
+    @Serializable data class TaskCreate(@Contextual val defaultDate: LocalDate? = null) : Route
+    @Serializable data class TaskDetail(val taskId: Int) : Route
 }
 
 val TOP_LEVEL_ROUTES = mapOf<NavKey, NavBarItem>(
