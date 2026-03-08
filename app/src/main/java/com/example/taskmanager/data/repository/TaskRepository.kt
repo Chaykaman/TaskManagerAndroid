@@ -17,8 +17,8 @@ interface TaskRepository {
         endDate: LocalDate
     ): Flow<List<Task>>
 
-    suspend fun getTaskById(id: Long): Task?
+    suspend fun getTaskById(id: Int): Task?
     suspend fun addTask(task: Task)
     suspend fun updateTask(task: Task)
-    suspend fun deleteTask(id: Long)
+    suspend fun deleteTask(id: Int)
 }

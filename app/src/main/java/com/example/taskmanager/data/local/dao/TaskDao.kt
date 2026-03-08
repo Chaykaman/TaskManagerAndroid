@@ -28,7 +28,7 @@ interface TaskDao {
     fun getOverdueTasks(date: String): Flow<List<Task>>
 
     @Query("SELECT * FROM tasks WHERE id = :taskId")
-    suspend fun getTaskById(taskId: Long): Task?
+    suspend fun getTaskById(taskId: Int): Task?
 
     @Query("SELECT * FROM tasks WHERE dueDate = :date")
     fun getTasksForDate(date: String): Flow<List<Task>>
@@ -43,5 +43,5 @@ interface TaskDao {
     suspend fun deleteTask(task: Task)
 
     @Query("DELETE FROM tasks WHERE id = :taskId")
-    suspend fun deleteTaskById(taskId: Long)
+    suspend fun deleteTaskById(taskId: Int)
 }

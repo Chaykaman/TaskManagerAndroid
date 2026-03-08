@@ -78,7 +78,7 @@ class TaskRepositoryImpl @Inject constructor(
      * Получение задачи по её идентификатору.
      * @param id Идентификатор задачи.
      */
-    override suspend fun getTaskById(id: Long): Task? {
+    override suspend fun getTaskById(id: Int): Task? {
         return taskDao.getTaskById(taskId = id)
     }
 
@@ -104,7 +104,7 @@ class TaskRepositoryImpl @Inject constructor(
      * Удаление задачи из базы данных.
      * @param id Идентификатор задачи.
      */
-    override suspend fun deleteTask(id: Long) {
+    override suspend fun deleteTask(id: Int) {
         taskDao.deleteTaskById(taskId = id)
         TaskLogger.i("[TaskRepositoryImpl] Задача под номером '${id}' удалена")
     }
