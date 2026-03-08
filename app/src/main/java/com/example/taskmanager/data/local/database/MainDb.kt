@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.taskmanager.data.local.dao.Dao
+import com.example.taskmanager.data.local.dao.TaskDao
 import com.example.taskmanager.data.local.entity.Task
 
 @Database(
@@ -17,6 +18,8 @@ import com.example.taskmanager.data.local.entity.Task
 abstract class MainDb : RoomDatabase() {
 
     abstract fun getDao(): Dao
+
+    abstract fun getTaskDao(): TaskDao
 
     companion object {
         @Volatile

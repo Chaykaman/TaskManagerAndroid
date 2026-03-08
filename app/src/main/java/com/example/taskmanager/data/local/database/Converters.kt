@@ -10,16 +10,16 @@ import java.time.LocalTime
 class Converters {
 
     @TypeConverter
-    fun fromStatus(status: Status): Int = status.value
+    fun fromStatus(status: Status): Int = status.id
 
     @TypeConverter
-    fun toStatus(value: Int): Status = Status.values().first { it.value == value }
+    fun toStatus(value: Int): Status = Status.entries.first { it.id == value }
 
     @TypeConverter
-    fun fromPriority(priority: Priority): Int = priority.value
+    fun fromPriority(priority: Priority): Int = priority.id
 
     @TypeConverter
-    fun toPriority(value: Int): Priority = Priority.values().first { it.value == value }
+    fun toPriority(value: Int): Priority = Priority.entries.first { it.id == value }
 
     @TypeConverter
     fun fromLocalDate(date: LocalDate?): String? = date?.toString()

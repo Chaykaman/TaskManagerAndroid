@@ -5,42 +5,49 @@ import androidx.room.PrimaryKey
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
-
-enum class Status(val value: Int, val displayName: String) {
-    Todo(1, "К выполнению"),
-    InProgress(2, "В процессе"),
-    Completed(3, "Выполнено")
-}
-
-enum class Priority(val value: Int, val displayName: String) {
-    DoItNow(1, "Срочно"),
-    Important(2, "Важно"),
-    Necessary(3, "Необходимо"),
-    RestoreLater(4, "Потом")
-}
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Entity(tableName = "tasks")
 data class Task(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
 
-    //Название и описание
+    // Название и описание
     var title: String,
     var description: String = "",
 
-    //Дедлайн даты
+    // Дедлайн даты
     var dueDate: LocalDate? = null,
     var dueTime: LocalTime? = null,
 
-    //Статусы и приорететы
-    var status: Status = Status.Todo,
-    var priority: Priority = Priority.Necessary,
+    // Статусы и приоритеты
+    var status: Status = Status.TODO,
+    var priority: Priority = Priority.PRIORITY_4,
     var isCompleted: Boolean = false,
 
-    //Настройки
+    // Настройки
     var notificationEnabled: Boolean = false,
 
-    //Дата создания и измененения
+    // Дата создания и изменения
     var createdAt: LocalDateTime =  LocalDateTime.now(),
     var updatedAt: LocalDateTime =  LocalDateTime.now()
-)
+) {
+    fun formattedDueDate(): String? {
+        val date = dueDate ?: return null
+
+        val dateFormatter = DateTimeFormatter.ofPattern("d MMMM", Locale.forLanguageTag("ru"))
+        val formattedDate = date.format(dateFormatter)
+
+        return if (dueTime != null) {
+            val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+            "$formattedDate, ${dueTime!!.format(timeFormatter)}"
+        } else {
+            formattedDate
+        }
+    }
+
+    fun isOverdue(): Boolean {
+        return !isCompleted && dueDate?.isBefore(LocalDate.now()) == true
+    }
+}
