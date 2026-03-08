@@ -19,7 +19,7 @@ class Converters {
     fun fromPriority(priority: Priority): Int = priority.id
 
     @TypeConverter
-    fun toPriority(value: Int): Priority = Priority.entries.first { it.ordinal == value }
+    fun toPriority(value: Int): Priority = Priority.entries.first { it.id == value }
 
     @TypeConverter
     fun fromLocalDate(date: LocalDate?): String? = date?.toString()
