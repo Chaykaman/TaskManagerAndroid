@@ -25,10 +25,13 @@ fun Main() {
     val entryProvider = entryProvider {
         featureTasksSection(
             onTaskClick = { taskId -> navigator.navigate(Route.TaskDetail(taskId)) },
-            onAddTaskClick = { navigator.navigate(Route.TaskCreate(it)) },
+            onAddTaskClick = { date -> navigator.navigate(Route.TaskCreate(date)) },
             onBack = { navigator.goBack() }
         )
-        featureCalendarSection()
+        featureCalendarSection(
+            onTaskClick = { taskId -> navigator.navigate(Route.TaskDetail(taskId)) },
+            onAddTaskClick = { date -> navigator.navigate(Route.TaskCreate(date)) },
+        )
         featureMenuSection()
     }
 

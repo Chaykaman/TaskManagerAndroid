@@ -50,9 +50,15 @@ fun EntryProviderScope<NavKey>.featureTasksSection(
     }
 }
 
-fun EntryProviderScope<NavKey>.featureCalendarSection() {
+fun EntryProviderScope<NavKey>.featureCalendarSection(
+    onTaskClick: (Int) -> Unit,
+    onAddTaskClick: (LocalDate?) -> Unit,
+) {
     entry<Route.Calendar> {
-        CalendarScreen()
+        CalendarScreen(
+            onTaskClick = onTaskClick,
+            onAddTaskClick = onAddTaskClick
+        )
     }
 }
 
