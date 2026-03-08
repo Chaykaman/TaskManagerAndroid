@@ -5,6 +5,8 @@ import androidx.room.PrimaryKey
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Entity(tableName = "tasks")
 data class Task(
@@ -30,4 +32,22 @@ data class Task(
     // Дата создания и изменения
     var createdAt: LocalDateTime =  LocalDateTime.now(),
     var updatedAt: LocalDateTime =  LocalDateTime.now()
-)
+) {
+    fun formattedDueDate(): String? {
+        val date = dueDate ?: return null
+
+        val dateFormatter = DateTimeFormatter.ofPattern("d MMMM", Locale.forLanguageTag("ru"))
+        val formattedDate = date.format(dateFormatter)
+
+        return if (dueTime != null) {
+            val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+            "$formattedDate, ${dueTime!!.format(timeFormatter)}"
+        } else {
+            formattedDate
+        }
+    }
+
+    fun isOverdue(): Boolean {
+        return !isCompleted && dueDate?.isBefore(LocalDate.now()) == true
+    }
+}
