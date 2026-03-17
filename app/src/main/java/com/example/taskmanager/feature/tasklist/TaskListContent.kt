@@ -31,7 +31,7 @@ fun TaskListContent(
         )
 
         TaskList(
-            tasks = uiState.tasks,
+            items = uiState.items,
             placeholderText = when (uiState.activeFilter) {
                 TaskFilter.COMPLETED -> { "Пока нет выполненных задач.\nСамое время закрыть первую!" }
                 TaskFilter.OVERDUE -> {"Просроченных задач нет.\nТак держать!"}

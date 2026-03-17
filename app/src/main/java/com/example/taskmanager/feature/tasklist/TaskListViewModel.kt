@@ -3,11 +3,12 @@ package com.example.taskmanager.feature.tasklist
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.taskmanager.data.local.entity.Priority
-import com.example.taskmanager.data.local.entity.SortDirection
-import com.example.taskmanager.data.local.entity.SortField
+import com.example.taskmanager.data.local.entity.SortingDirection
+import com.example.taskmanager.data.local.entity.SortingField
 import com.example.taskmanager.data.local.entity.Task
 import com.example.taskmanager.data.local.entity.TaskFilter
-import com.example.taskmanager.data.local.entity.TaskSort
+import com.example.taskmanager.data.local.entity.TaskGrouping
+import com.example.taskmanager.data.local.entity.TaskSorting
 import com.example.taskmanager.data.logger.TaskLogger
 import com.example.taskmanager.data.repository.TaskRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,7 +31,8 @@ class TaskListViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _activeFilter = MutableStateFlow(TaskFilter.ALL)
-    private val _activeSort = MutableStateFlow(TaskSort())
+    private val _activeSorting = MutableStateFlow(TaskSorting())
+    private val _activeGrouping = MutableStateFlow(TaskGrouping.NONE)
 
     init {
         TaskLogger.i("[TaskListViewModel] Инициализирован")
@@ -39,14 +41,16 @@ class TaskListViewModel @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<TaskListUiState> = combine(
         _activeFilter,
-        _activeSort
-    ) { filter, sort -> Pair(filter, sort) }
-        .flatMapLatest { (filter, sort) ->
-            taskRepository.getTasks(filter, sort).map { tasks ->
+        _activeSorting,
+        _activeGrouping
+    ) { filter, sorting, grouping -> Triple(filter, sorting, grouping) }
+        .flatMapLatest { (filter, sorting, grouping) ->
+            taskRepository.getTasks(filter, sorting).map { tasks ->
                 TaskListUiState(
-                    tasks = tasks,
+                    items = groupTasks(tasks, grouping),
                     activeFilter = filter,
-                    activeSort = sort
+                    activeSorting = sorting,
+                    activeGrouping = grouping
                 )
             }
         }
@@ -55,6 +59,32 @@ class TaskListViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = TaskListUiState(isLoading = true)
         )
+
+    private fun groupTasks(tasks: List<Task>, grouping: TaskGrouping): List<TaskListItem> {
+        val grouped: Map<String, List<Task>> = when (grouping) {
+            TaskGrouping.TITLE -> tasks
+                .groupBy { task -> task.title.firstOrNull()?.uppercaseChar()?.toString() ?: "?" }
+                .toSortedMap()
+
+            TaskGrouping.DUE_DATE -> tasks
+                .groupBy { task -> task.formattedDueDate() }
+                .entries
+                .sortedBy { it.value.firstOrNull()?.dueDate ?: LocalDate.MAX }
+                .associate { it.key to it.value }
+
+            TaskGrouping.PRIORITY -> tasks
+                .groupBy { task -> task.priority.label }
+                .entries
+                .sortedBy { (label, _) -> Priority.entries.first { it.label == label }.id }
+                .associate { it.key to it.value }
+
+            TaskGrouping.NONE -> return tasks.map { TaskListItem.TaskItem(it) }
+        }
+
+        return grouped.flatMap { (groupTitle, groupTasks) ->
+            listOf(TaskListItem.Header(groupTitle)) + groupTasks.map { TaskListItem.TaskItem(it) }
+        }
+    }
 
     /**
      * Установка фильтра задач
@@ -65,18 +95,26 @@ class TaskListViewModel @Inject constructor(
     }
 
     /**
-     * Установка поля для сортировки задач
-     * @param field Поле для сортировки
+     * Установка группировки задач
+     * @param grouping Поле группировки
      */
-    fun onSortFieldSelected(field: SortField) {
-        _activeSort.update { currentSort ->
-            if (currentSort.field == field) {
-                currentSort.copy(
-                    direction = if (currentSort.direction == SortDirection.ASC)
-                        SortDirection.DESC else SortDirection.ASC
+    fun setGrouping(grouping: TaskGrouping) {
+        _activeGrouping.update { grouping }
+    }
+
+    /**
+     * Установка сортировки задач
+     * @param field Поле сортировки
+     */
+    fun setSorting(field: SortingField) {
+        _activeSorting.update { currentSorting ->
+            if (currentSorting.field == field) {
+                currentSorting.copy(
+                    direction = if (currentSorting.direction == SortingDirection.ASC)
+                        SortingDirection.DESC else SortingDirection.ASC
                 )
             } else {
-                TaskSort(field = field, direction = SortDirection.ASC)
+                TaskSorting(field = field, direction = SortingDirection.ASC)
             }
         }
     }
