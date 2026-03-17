@@ -1,8 +1,6 @@
 package com.example.taskmanager.feature.tasklist
 
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,8 +11,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.example.taskmanager.feature.ScreenScaffold
 import com.example.taskmanager.feature.tasklist.components.FloatingAddButton
-import com.example.taskmanager.feature.tasklist.components.TaskDisplayContent
 import com.example.taskmanager.feature.tasklist.components.TaskListTopAppBar
+import com.example.taskmanager.feature.tasksdisplay.TasksDisplayScreen
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -26,13 +24,14 @@ fun TaskListScreen(
     onAddTaskClick: (LocalDate?) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    var showBottomSheet by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState()
+    var showSortingDisplay by remember { mutableStateOf(false) }
+    var showGroupingDisplay by remember { mutableStateOf(false) }
 
     ScreenScaffold(
         topBar = {
             TaskListTopAppBar(
-                onActionClick = { showBottomSheet = true }
+                onGroupingClick = { showGroupingDisplay = true },
+                onSortingClick = { showSortingDisplay = true }
             )
         },
         floatingActionButton = {
@@ -58,18 +57,14 @@ fun TaskListScreen(
             onFilterSelected = { filter -> viewModel.setFilter(filter) }
         )
 
-        if (showBottomSheet) {
-            ModalBottomSheet(
-                sheetState = sheetState,
-                onDismissRequest = { showBottomSheet = false }
-            ) {
-                TaskDisplayContent(
-                    activeSort = uiState.activeSort,
-                    onSortField = {
-                        sortField -> viewModel.onSortFieldSelected(sortField)
-                    }
-                )
-            }
-        }
+        TasksDisplayScreen(
+            viewModel = viewModel,
+            activeGrouping = uiState.activeGrouping,
+            activeSorting = uiState.activeSorting,
+            showGroupingSheet = showGroupingDisplay,
+            showSortingSheet = showSortingDisplay,
+            onGroupingClick = { showGroupingDisplay = it },
+            onSortingClick = { showSortingDisplay = it }
+        )
     }
 }
