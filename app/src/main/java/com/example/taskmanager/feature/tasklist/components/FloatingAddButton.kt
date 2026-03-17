@@ -14,7 +14,6 @@ fun FloatingAddButton(
     onClick: () -> Unit,
 ) {
     FloatingActionButton(
-        modifier = Modifier.offset(y = 24.dp),
         onClick = onClick,
         content = {
             Icon(
