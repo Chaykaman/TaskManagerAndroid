@@ -1,6 +1,5 @@
 package com.example.taskmanager.feature.calendar
 
-import com.example.taskmanager.data.local.entity.Task
 import com.example.taskmanager.feature.tasklist.TaskListItem
 import java.time.DayOfWeek
 import java.time.LocalDate
