@@ -9,7 +9,7 @@ import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material.icons.filled.Today
 import androidx.compose.ui.graphics.vector.ImageVector
 
-enum class SortField(
+enum class SortingField(
     val icon: ImageVector,
     val label: String
 ) {
@@ -31,7 +31,7 @@ enum class SortField(
     )
 }
 
-enum class SortDirection(
+enum class SortingDirection(
     val icon: ImageVector,
     val label: String
 ) {
@@ -45,7 +45,7 @@ enum class SortDirection(
     )
 }
 
-data class TaskSort(
-    val field: SortField = SortField.ID,
-    val direction: SortDirection = SortDirection.ASC
+data class TaskSorting(
+    val field: SortingField = SortingField.ID,
+    val direction: SortingDirection = SortingDirection.ASC
 )

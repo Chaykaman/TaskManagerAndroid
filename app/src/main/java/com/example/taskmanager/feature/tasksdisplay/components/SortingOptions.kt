@@ -1,4 +1,4 @@
-package com.example.taskmanager.feature.tasklist.components
+package com.example.taskmanager.feature.tasksdisplay.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -16,25 +16,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import com.example.taskmanager.data.local.entity.SortDirection
-import com.example.taskmanager.data.local.entity.SortField
-import com.example.taskmanager.data.local.entity.TaskSort
+import com.example.taskmanager.data.local.entity.SortingDirection
+import com.example.taskmanager.data.local.entity.SortingField
+import com.example.taskmanager.data.local.entity.TaskSorting
 import com.example.taskmanager.feature.taskdetail.components.IconField
+import com.example.taskmanager.feature.tasklist.components.AnimatedDirectionIcon
 
 @Composable
-fun TaskSortOptions(
-    activeSort: TaskSort,
-    onSortSelected: (SortField) -> Unit,
+fun SortingOptions(
+    activeSorting: TaskSorting,
+    onSortingSelected: (SortingField) -> Unit,
 ) {
     LazyColumn(modifier = Modifier.selectableGroup()) {
-        items(SortField.entries) { currentSortField ->
+        items(SortingField.entries) { currentSortingField ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
                     .selectable(
-                        selected = activeSort.field == currentSortField,
-                        onClick = { onSortSelected(currentSortField) },
+                        selected = activeSorting.field == currentSortingField,
+                        onClick = { onSortingSelected(currentSortingField) },
                         role = Role.RadioButton
                     )
                     .padding(horizontal = 8.dp),
@@ -42,25 +43,25 @@ fun TaskSortOptions(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 IconField(
-                    icon = currentSortField.icon,
-                    tint = if (activeSort.field == currentSortField) {
+                    icon = currentSortingField.icon,
+                    tint = if (activeSorting.field == currentSortingField) {
                         MaterialTheme.colorScheme.primary
                     } else {
                         MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                     }
                 )
 
-                TaskSortOptionTextFields(
-                    title = currentSortField.label,
-                    visible = activeSort.field == currentSortField,
-                    directionText = activeSort.direction.label,
+                SortingOptionTextFields(
+                    title = currentSortingField.label,
+                    visible = activeSorting.field == currentSortingField,
+                    directionText = activeSorting.direction.label,
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
 
                 AnimatedDirectionIcon(
-                    targetValue = activeSort.direction == SortDirection.ASC,
-                    visible = activeSort.field == currentSortField,
+                    targetValue = activeSorting.direction == SortingDirection.ASC,
+                    visible = activeSorting.field == currentSortingField,
                 )
             }
         }
