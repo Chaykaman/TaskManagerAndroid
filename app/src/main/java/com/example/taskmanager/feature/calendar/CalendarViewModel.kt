@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.taskmanager.data.local.entity.Task
 import com.example.taskmanager.data.logger.TaskLogger
 import com.example.taskmanager.data.repository.TaskRepository
+import com.example.taskmanager.feature.tasklist.TaskListItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -67,7 +68,9 @@ class CalendarViewModel @Inject constructor(
 
                         _uiState.update { currentState ->
                             currentState.copy(
-                                tasksForSelectedDate = tasksForDay,
+                                tasksForSelectedDate = tasksForDay.map { task ->
+                                    TaskListItem.TaskItem(task)
+                                },
                                 daysWithTasks = daysWithTasks,
                                 isLoading = false
                             )
