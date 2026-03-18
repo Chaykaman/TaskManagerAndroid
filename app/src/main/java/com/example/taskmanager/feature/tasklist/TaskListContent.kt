@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.taskmanager.data.local.entity.Task
-import com.example.taskmanager.data.local.entity.TaskFilter
+import com.example.taskmanager.data.local.entity.TaskFiltering
 import com.example.taskmanager.feature.tasklist.components.TaskFilterField
 import com.example.taskmanager.feature.tasklist.components.TaskList
 
@@ -18,7 +18,7 @@ fun TaskListContent(
     onClick: (Int) -> Unit,
     onToggleDone: (Task) -> Unit,
     onRemove: (Int) -> Unit,
-    onFilterSelected: (TaskFilter) -> Unit
+    onFilterSelected: (TaskFiltering) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -26,15 +26,15 @@ fun TaskListContent(
             .fillMaxSize()
     ) {
         TaskFilterField(
-            activeFiler = uiState.activeFilter,
+            activeFilter = uiState.activeFiltering,
             onFilterSelected = onFilterSelected
         )
 
         TaskList(
             items = uiState.items,
-            placeholderText = when (uiState.activeFilter) {
-                TaskFilter.COMPLETED -> { "Пока нет выполненных задач.\nСамое время закрыть первую!" }
-                TaskFilter.OVERDUE -> {"Просроченных задач нет.\nТак держать!"}
+            placeholderText = when (uiState.activeFiltering) {
+                TaskFiltering.COMPLETED -> { "Пока нет выполненных задач.\nСамое время закрыть первую!" }
+                TaskFiltering.OVERDUE -> {"Просроченных задач нет.\nТак держать!"}
                 else -> {"Задач пока нет.\nНажмите +, чтобы добавить новую."}
             },
             onClick = onClick,

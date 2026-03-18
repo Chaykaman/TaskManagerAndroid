@@ -10,13 +10,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.taskmanager.data.local.entity.TaskFilter
+import com.example.taskmanager.data.local.entity.TaskFiltering
 import com.example.taskmanager.ui.theme.TaskManagerTheme
 
 @Composable
 fun TaskFilterField(
-    activeFiler: TaskFilter,
-    onFilterSelected: (TaskFilter) -> Unit
+    activeFilter: TaskFiltering,
+    onFilterSelected: (TaskFiltering) -> Unit
 ) {
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
@@ -25,29 +25,29 @@ fun TaskFilterField(
     ) {
         item {
             FilterChip(
-                selected = activeFiler == TaskFilter.ALL,
-                onClick = { onFilterSelected(TaskFilter.ALL) },
+                selected = activeFilter == TaskFiltering.ALL,
+                onClick = { onFilterSelected(TaskFiltering.ALL) },
                 label = { Text("Все") }
             )
         }
         item {
             FilterChip(
-                selected = activeFiler == TaskFilter.ACTIVE,
-                onClick = { onFilterSelected(TaskFilter.ACTIVE) },
+                selected = activeFilter == TaskFiltering.ACTIVE,
+                onClick = { onFilterSelected(TaskFiltering.ACTIVE) },
                 label = { Text("Активные") }
             )
         }
         item {
             FilterChip(
-                selected = activeFiler == TaskFilter.COMPLETED,
-                onClick = { onFilterSelected(TaskFilter.COMPLETED) },
+                selected = activeFilter == TaskFiltering.COMPLETED,
+                onClick = { onFilterSelected(TaskFiltering.COMPLETED) },
                 label = { Text("Выполненные") }
             )
         }
         item {
             FilterChip(
-                selected = activeFiler == TaskFilter.OVERDUE,
-                onClick = { onFilterSelected(TaskFilter.OVERDUE) },
+                selected = activeFilter == TaskFiltering.OVERDUE,
+                onClick = { onFilterSelected(TaskFiltering.OVERDUE) },
                 label = { Text("Просроченные") }
             )
         }
@@ -56,10 +56,10 @@ fun TaskFilterField(
 
 @Preview(showBackground = true)
 @Composable
-private fun TaskFilterFieldPreview() {
+private fun TaskFilteringFieldPreview() {
     TaskManagerTheme {
         TaskFilterField(
-            activeFiler = TaskFilter.ALL,
+            activeFilter = TaskFiltering.ALL,
             onFilterSelected = {}
         )
     }
