@@ -6,33 +6,31 @@ import com.example.taskmanager.data.local.entity.Priority
 import com.example.taskmanager.data.local.entity.SortingDirection
 import com.example.taskmanager.data.local.entity.SortingField
 import com.example.taskmanager.data.local.entity.Task
-import com.example.taskmanager.data.local.entity.TaskFilter
+import com.example.taskmanager.data.local.entity.TaskFiltering
 import com.example.taskmanager.data.local.entity.TaskGrouping
 import com.example.taskmanager.data.local.entity.TaskSorting
 import com.example.taskmanager.data.logger.TaskLogger
+import com.example.taskmanager.data.repository.DisplayOptionsRepository
 import com.example.taskmanager.data.repository.TaskRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
 import javax.inject.Inject
 
 @HiltViewModel
 class TaskListViewModel @Inject constructor(
-    private val taskRepository: TaskRepository
+    private val taskRepository: TaskRepository,
+    private val optionsRepository: DisplayOptionsRepository
 ) : ViewModel() {
-
-    private val _activeFilter = MutableStateFlow(TaskFilter.ALL)
-    private val _activeSorting = MutableStateFlow(TaskSorting())
-    private val _activeGrouping = MutableStateFlow(TaskGrouping.NONE)
 
     init {
         TaskLogger.i("[TaskListViewModel] Инициализирован")
@@ -40,19 +38,29 @@ class TaskListViewModel @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<TaskListUiState> = combine(
-        _activeFilter,
-        _activeSorting,
-        _activeGrouping
-    ) { filter, sorting, grouping -> Triple(filter, sorting, grouping) }
-        .flatMapLatest { (filter, sorting, grouping) ->
-            taskRepository.getTasks(filter, sorting).map { tasks ->
-                TaskListUiState(
-                    items = groupTasks(tasks, grouping),
-                    activeFilter = filter,
-                    activeSorting = sorting,
-                    activeGrouping = grouping
-                )
-            }
+        optionsRepository.filtering,
+        optionsRepository.sorting,
+        optionsRepository.grouping
+    ) { filtering, sorting, grouping ->
+        Triple(filtering, sorting, grouping)
+    }
+        .flatMapLatest { (filtering, sorting, grouping) ->
+            taskRepository.getTasks(filtering, sorting)
+                .map { tasks ->
+                    TaskListUiState(
+                        items = groupTasks(tasks, grouping),
+                        activeFiltering = filtering,
+                        activeSorting = sorting,
+                        activeGrouping = grouping
+                    )
+                }
+                .catch { exception ->
+                    emit(
+                        TaskListUiState(
+                            errorMessage = "Не удалось загрузить задачи: ${exception.message}"
+                        )
+                    )
+                }
         }
         .stateIn(
             scope = viewModelScope,
@@ -88,10 +96,12 @@ class TaskListViewModel @Inject constructor(
 
     /**
      * Установка фильтра задач
-     * @param filter Фильтр задач
+     * @param filtering Фильтр задач
      */
-    fun setFilter(filter: TaskFilter) {
-        _activeFilter.update { filter }
+    fun setFilter(filtering: TaskFiltering) {
+        viewModelScope.launch {
+            optionsRepository.saveFiltering(filtering)
+        }
     }
 
     /**
@@ -99,7 +109,9 @@ class TaskListViewModel @Inject constructor(
      * @param grouping Поле группировки
      */
     fun setGrouping(grouping: TaskGrouping) {
-        _activeGrouping.update { grouping }
+        viewModelScope.launch {
+            optionsRepository.saveGrouping(grouping)
+        }
     }
 
     /**
@@ -107,8 +119,10 @@ class TaskListViewModel @Inject constructor(
      * @param field Поле сортировки
      */
     fun setSorting(field: SortingField) {
-        _activeSorting.update { currentSorting ->
-            if (currentSorting.field == field) {
+        viewModelScope.launch {
+            val currentSorting = uiState.value.activeSorting
+
+            val newSorting = if (currentSorting.field == field) {
                 currentSorting.copy(
                     direction = if (currentSorting.direction == SortingDirection.ASC)
                         SortingDirection.DESC else SortingDirection.ASC
@@ -116,6 +130,8 @@ class TaskListViewModel @Inject constructor(
             } else {
                 TaskSorting(field = field, direction = SortingDirection.ASC)
             }
+
+            optionsRepository.saveSorting(newSorting)
         }
     }
 
@@ -127,7 +143,7 @@ class TaskListViewModel @Inject constructor(
      * @param dueDate Дата выполнения задачи
      * @param dueTime Время выполнения задачи
      */
-    suspend fun addTask(
+    fun addTask(
         title: String,
         description: String = "",
         priority: Priority = Priority.PRIORITY_4,
@@ -146,24 +162,30 @@ class TaskListViewModel @Inject constructor(
         )
 
         // Добавляем задачу
-        taskRepository.addTask(newTask)
+        viewModelScope.launch {
+            taskRepository.addTask(newTask)
+        }
     }
 
     /**
      * Обновление статуса выполнения задачи
      * @param task Обновлённая задача
      */
-    suspend fun toggleTaskCompletion(task: Task) {
-        taskRepository.updateTask(
-            task = task.copy(isCompleted = !task.isCompleted)
-        )
+    fun toggleTaskCompletion(task: Task) {
+        viewModelScope.launch {
+            taskRepository.updateTask(
+                task = task.copy(isCompleted = !task.isCompleted)
+            )
+        }
     }
 
     /**
      * Удаление задачи
      * @param taskId Идентификатор задачи
      */
-    suspend fun deleteTask(taskId: Int) {
-        taskRepository.deleteTask(id = taskId)
+    fun deleteTask(taskId: Int) {
+        viewModelScope.launch {
+            taskRepository.deleteTask(id = taskId)
+        }
     }
 }
