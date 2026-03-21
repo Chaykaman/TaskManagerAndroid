@@ -1,4 +1,4 @@
-package com.example.taskmanager.feature.tasklist.components
+package com.example.taskmanager.feature.tasksdisplay
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,17 +9,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.taskmanager.data.local.entity.SortField
-import com.example.taskmanager.data.local.entity.TaskSort
+import com.example.taskmanager.data.local.entity.SortingField
+import com.example.taskmanager.data.local.entity.TaskSorting
+import com.example.taskmanager.feature.tasksdisplay.components.SortingOptions
 
 @Composable
-fun TaskDisplayContent(
-    activeSort: TaskSort,
-    onSortField: (SortField) -> Unit
+fun SortingDisplayContent(
+    activeSorting: TaskSorting,
+    onSortingField: (SortingField) -> Unit
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Text(
             text = "Сортировка",
             style = MaterialTheme.typography.titleLarge,
@@ -27,9 +26,9 @@ fun TaskDisplayContent(
             modifier = Modifier.padding(horizontal = 24.dp)
         )
 
-        TaskSortOptions(
-            activeSort = activeSort,
-            onSortSelected = onSortField
+        SortingOptions(
+            activeSorting = activeSorting,
+            onSortingSelected = onSortingField
         )
     }
 }

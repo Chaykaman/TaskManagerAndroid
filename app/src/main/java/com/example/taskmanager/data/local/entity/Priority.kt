@@ -11,25 +11,25 @@ enum class Priority(
     PRIORITY_1(
         id = 1,
         shortLabel = "№1",
-        label = "Срочный",
+        label = "Высокий",
         color = Color(0xFFE53935)
     ),
     PRIORITY_2(
         id = 2,
         shortLabel = "№2",
-        label = "Высокий",
+        label = "Средний",
         color = Color(0xFFFF8F00)
     ),
     PRIORITY_3(
         id = 3,
         shortLabel = "№3",
-        label = "Средний",
+        label = "Низкий",
         color = Color(0xFF1E88E5)
     ),
     PRIORITY_4(
         id = 4,
         shortLabel = "№4",
-        label = "Обычный",
+        label = "Без приоритета",
         color = Color(0xFF90A4AE)
     )
 }

@@ -52,7 +52,7 @@ fun CalendarContent(
     )
 
     TaskList(
-        tasks = calendarUiState.tasksForSelectedDate,
+        items = calendarUiState.tasksForSelectedDate,
         placeholderText = when {
             calendarUiState.selectedDate == currentDate -> {"На сегодня задач нет"}
             else -> {"На этот день задач нет"}

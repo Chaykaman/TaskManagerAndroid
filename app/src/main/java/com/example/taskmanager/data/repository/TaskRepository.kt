@@ -1,15 +1,15 @@
 package com.example.taskmanager.data.repository
 
 import com.example.taskmanager.data.local.entity.Task
-import com.example.taskmanager.data.local.entity.TaskFilter
-import com.example.taskmanager.data.local.entity.TaskSort
+import com.example.taskmanager.data.local.entity.TaskFiltering
+import com.example.taskmanager.data.local.entity.TaskSorting
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
 interface TaskRepository {
     fun getTasks(
-        filter: TaskFilter = TaskFilter.ALL,
-        sort: TaskSort = TaskSort()
+        filtering: TaskFiltering = TaskFiltering.ALL,
+        sorting: TaskSorting = TaskSorting()
     ): Flow<List<Task>>
     fun getTasksForDate(date: LocalDate): Flow<List<Task>>
     fun getTasksForDateRange(

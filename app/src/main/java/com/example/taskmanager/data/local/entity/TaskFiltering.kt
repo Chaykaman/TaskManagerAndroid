@@ -1,6 +1,6 @@
 package com.example.taskmanager.data.local.entity
 
-enum class TaskFilter {
+enum class TaskFiltering {
     ALL,
     ACTIVE,
     COMPLETED,

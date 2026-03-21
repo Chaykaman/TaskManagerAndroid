@@ -8,6 +8,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -18,7 +19,7 @@ fun TaskTimePicker(
     onShowTimePickerChange: () -> Unit,
 ) {
     val timePickerState = rememberTimePickerState(
-        initialHour = dueTime?.hour ?: 0,
+        initialHour = dueTime?.hour ?: (LocalTime.now().hour + 1),
         initialMinute = dueTime?.minute ?: 0
     )
 
@@ -26,7 +27,7 @@ fun TaskTimePicker(
         onDismissRequest = onShowTimePickerChange,
         title = { Text("Выбрать время") },
         text = {
-            Column {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 TimePicker(state = timePickerState)
                 if (dueTime != null) {
                     TaskCancelDateTime(

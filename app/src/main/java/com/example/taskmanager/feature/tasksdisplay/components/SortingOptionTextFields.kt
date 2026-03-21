@@ -1,4 +1,4 @@
-package com.example.taskmanager.feature.tasklist.components
+package com.example.taskmanager.feature.tasksdisplay.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontWeight
 
 @Composable
-fun TaskSortOptionTextFields(
+fun SortingOptionTextFields(
     title: String,
     visible: Boolean,
     directionText: String

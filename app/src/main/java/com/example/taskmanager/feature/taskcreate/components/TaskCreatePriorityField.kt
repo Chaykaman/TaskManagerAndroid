@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Flag
+import androidx.compose.material.icons.outlined.Flag
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.DropdownMenu
@@ -63,7 +64,8 @@ fun TaskCreatePriorityField(
                     },
                     leadingIcon = {
                         Icon(
-                            imageVector = Icons.Default.Flag,
+                            imageVector = if (priorityItem == priority)
+                                Icons.Default.Flag else Icons.Outlined.Flag,
                             contentDescription = "Приоритет",
                             tint = priorityItem.color
                         )
