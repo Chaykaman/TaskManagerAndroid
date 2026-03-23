@@ -5,8 +5,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun TaskDetailScreen(
@@ -22,16 +20,14 @@ fun TaskDetailScreen(
 
     TaskDetailContent(
         uiState = uiState,
-        onTitleChanged = { newTitle -> viewModel.onTitleChanged(newTitle = newTitle) },
-        onDescriptionChanged = { newDescription -> viewModel.onDescriptionChanged(newDescription = newDescription) },
-        onToggleIsCompleted = { isCompleted -> viewModel.onCompletedChanged(isCompleted = isCompleted) },
-        onPriorityChange = { newPriority -> viewModel.onPriorityChanged(priority = newPriority) },
-        onDateSelected = { newDueDate -> viewModel.onDateSelected(date = newDueDate) },
-        onTimeSelected = { newDueTime -> viewModel.onTimeSelected(time = newDueTime) },
+        onTitleChanged = viewModel::onTitleChanged,
+        onDescriptionChanged = viewModel::onDescriptionChanged,
+        onToggleIsCompleted = viewModel::onCompletedChanged,
+        onPriorityChange = viewModel::onPriorityChanged,
+        onDateSelected = viewModel::onDateSelected,
+        onTimeSelected = viewModel::onTimeSelected,
         onSaveClick = {
-            viewModel.viewModelScope.launch {
-                viewModel.saveChanges()
-            }
+            viewModel.saveChanges()
             onBack()
         },
         onCancelClick = {
