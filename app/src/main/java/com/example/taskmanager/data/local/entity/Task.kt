@@ -33,21 +33,30 @@ data class Task(
     var createdAt: LocalDateTime =  LocalDateTime.now(),
     var updatedAt: LocalDateTime =  LocalDateTime.now()
 ) {
-    fun formattedDueDate(): String? {
-        val date = dueDate ?: return null
+    fun formattedDueDate(): String {
+        val date = dueDate ?: return "Без даты"
 
-        val dateFormatter = DateTimeFormatter.ofPattern("d MMMM", Locale.forLanguageTag("ru"))
-        val formattedDate = date.format(dateFormatter)
-
-        return if (dueTime != null) {
-            val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
-            "$formattedDate, ${dueTime!!.format(timeFormatter)}"
-        } else {
-            formattedDate
+        val today = LocalDate.now()
+        return when (date) {
+            today -> "Сегодня"
+            today.plusDays(1) -> "Завтра"
+            today.minusDays(1) -> "Вчера"
+            else -> {
+                val formatter = if (date.year == today.year) {
+                    DateTimeFormatter.ofPattern("d MMMM", Locale.forLanguageTag("ru"))
+                } else {
+                    DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.forLanguageTag("ru"))
+                }
+                date.format(formatter)
+            }
         }
     }
 
     fun isOverdue(): Boolean {
-        return !isCompleted && dueDate?.isBefore(LocalDate.now()) == true
+        if (isCompleted || dueDate == null) return false
+
+        val time = dueTime ?: LocalTime.MAX
+        val dueDateTime = LocalDateTime.of(dueDate, time)
+        return dueDateTime.isBefore(LocalDateTime.now())
     }
 }

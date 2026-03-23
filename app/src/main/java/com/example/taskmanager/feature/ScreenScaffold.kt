@@ -1,6 +1,7 @@
 package com.example.taskmanager.feature
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -19,6 +20,7 @@ fun ScreenScaffold(
         topBar = topBar,
         floatingActionButton = floatingActionButton,
         floatingActionButtonPosition = floatingActionButtonPosition,
+        contentWindowInsets = WindowInsets(0),
         content = content
     )
 }

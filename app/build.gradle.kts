@@ -107,7 +107,8 @@ dependencies {
 
     // Расширенные иконки
     implementation(libs.androidx.material.icons.extended)
-
     // Календарь
     implementation(libs.calendar.compose)
+    // Хранилище
+    implementation(libs.androidx.datastore.preferences)
 }

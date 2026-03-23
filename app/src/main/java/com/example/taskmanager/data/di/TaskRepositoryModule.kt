@@ -1,5 +1,7 @@
 package com.example.taskmanager.data.di
 
+import com.example.taskmanager.data.repository.DisplayOptionsRepository
+import com.example.taskmanager.data.repository.DisplayOptionsRepositoryImpl
 import com.example.taskmanager.data.repository.TaskRepository
 import com.example.taskmanager.data.repository.TaskRepositoryImpl
 import dagger.Binds
@@ -14,5 +16,13 @@ abstract class TaskRepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindTaskRepository(impl: TaskRepositoryImpl): TaskRepository
+    abstract fun bindTaskRepository(
+        impl: TaskRepositoryImpl
+    ): TaskRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindDisplayOptionsRepository(
+        impl: DisplayOptionsRepositoryImpl
+    ): DisplayOptionsRepository
 }

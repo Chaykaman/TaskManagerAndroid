@@ -15,17 +15,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.taskmanager.data.local.entity.Task
+import com.example.taskmanager.feature.tasklist.TaskListItem
 
 @Composable
 fun TaskList(
-    tasks: List<Task>,
+    items: List<TaskListItem>,
     placeholderText: String = "Список пуст",
     onClick: (Int) -> Unit,
     onToggleDone: (Task) -> Unit,
     onRemove: (Int) -> Unit
 ) {
     AnimatedContent(
-        targetState = tasks.isEmpty(),
+        targetState = items.isEmpty(),
         label = "TaskList"
     ) { isEmpty ->
         if (isEmpty) {
@@ -46,16 +47,30 @@ fun TaskList(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 items(
-                    items = tasks,
-                    key = { task -> task.id }
-                ) { task ->
-                    SlidingTaskCard(
-                        task = task,
-                        onClick = onClick,
-                        onToggleDone = onToggleDone,
-                        onRemove = onRemove,
-                        modifier = Modifier.animateItem()
-                    )
+                    items = items,
+                    key = { item ->
+                        when (item) {
+                            is TaskListItem.Header -> "header_${item.title}"
+                            is TaskListItem.TaskItem -> "task_${item.task.id}"
+                        }
+                    },
+                    contentType = { item ->
+                        when (item) {
+                            is TaskListItem.Header -> "header"
+                            is TaskListItem.TaskItem -> "task"
+                        }
+                    }
+                ) { item ->
+                    when (item) {
+                        is TaskListItem.Header -> GroupHeader(text = item.title)
+                        is TaskListItem.TaskItem -> SlidingTaskCard(
+                            task = item.task,
+                            onClick = onClick,
+                            onToggleDone = onToggleDone,
+                            onRemove = onRemove,
+                            modifier = Modifier.animateItem()
+                        )
+                    }
                 }
             }
         }
