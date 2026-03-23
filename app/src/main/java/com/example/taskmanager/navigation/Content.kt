@@ -11,6 +11,8 @@ import com.example.taskmanager.feature.taskcreate.TaskCreateScreen
 import com.example.taskmanager.feature.taskdetail.TaskDetailScreen
 import com.example.taskmanager.feature.tasklist.TaskListScreen
 import java.time.LocalDate
+import com.example.taskmanager.feature.analytics.DailySurveyScreen
+import com.example.taskmanager.feature.analytics.StatisticsScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 fun EntryProviderScope<NavKey>.featureTasksSection(
@@ -62,8 +64,31 @@ fun EntryProviderScope<NavKey>.featureCalendarSection(
     }
 }
 
-fun EntryProviderScope<NavKey>.featureMenuSection() {
+fun EntryProviderScope<NavKey>.featureMenuSection(
+    onSurveyClick: () -> Unit,
+    onStatisticsClick: () -> Unit
+) {
     entry<Route.Menu> {
-        MenuScreen()
+        MenuScreen(
+            onSurveyClick = onSurveyClick,
+            onStatisticsClick = onStatisticsClick
+        )
+    }
+}
+
+// ИЗМЕНЕНО: добавлен onNavigateToStatistics
+fun EntryProviderScope<NavKey>.featureAnalyticsSection(
+    onBack: () -> Unit,
+    onNavigateToStatistics: () -> Unit
+) {
+    entry<Route.DailySurvey> {
+        DailySurveyScreen(
+            onBack = onBack,
+            // ИЗМЕНЕНО: теперь кнопка ведёт на статистику
+            onFinished = onNavigateToStatistics
+        )
+    }
+    entry<Route.Statistics> {
+        StatisticsScreen(onBack = onBack)
     }
 }
