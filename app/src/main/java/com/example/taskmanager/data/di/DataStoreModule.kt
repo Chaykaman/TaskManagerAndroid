@@ -18,11 +18,23 @@ object DataStoreModule {
 
     @Provides
     @Singleton
+    @DisplayOptionsDataStore
     fun provideDataStore(
         @ApplicationContext context: Context
     ): DataStore<Preferences> {
         return PreferenceDataStoreFactory.create {
             context.preferencesDataStoreFile("display_options")
+        }
+    }
+
+    @Provides
+    @Singleton
+    @AppSettingsDataStore
+    fun provideAppSettingsDataStore(
+        @ApplicationContext context: Context
+    ): DataStore<Preferences> {
+        return PreferenceDataStoreFactory.create {
+            context.preferencesDataStoreFile("app_settings")
         }
     }
 }

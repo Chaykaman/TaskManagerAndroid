@@ -13,6 +13,7 @@ import com.example.taskmanager.feature.tasklist.TaskListScreen
 import java.time.LocalDate
 import com.example.taskmanager.feature.analytics.DailySurveyScreen
 import com.example.taskmanager.feature.analytics.StatisticsScreen
+import com.example.taskmanager.feature.appsettings.AppSettingsScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 fun EntryProviderScope<NavKey>.featureTasksSection(
@@ -64,19 +65,30 @@ fun EntryProviderScope<NavKey>.featureCalendarSection(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 fun EntryProviderScope<NavKey>.featureMenuSection(
     onSurveyClick: () -> Unit,
-    onStatisticsClick: () -> Unit
+    onStatisticsClick: () -> Unit,
+    onAppSettingsClick: () -> Unit
 ) {
     entry<Route.Menu> {
         MenuScreen(
             onSurveyClick = onSurveyClick,
-            onStatisticsClick = onStatisticsClick
+            onStatisticsClick = onStatisticsClick,
+            onAppSettingsClick = onAppSettingsClick
         )
+    }
+
+    // Страница настроек
+    entry<Route.Settings>(
+        metadata = BottomSheetSceneStrategy.bottomSheet(
+            modifier = Modifier.fillMaxHeight()
+        )
+    ) {
+        AppSettingsScreen()
     }
 }
 
-// ИЗМЕНЕНО: добавлен onNavigateToStatistics
 fun EntryProviderScope<NavKey>.featureAnalyticsSection(
     onBack: () -> Unit,
     onNavigateToStatistics: () -> Unit
@@ -84,7 +96,6 @@ fun EntryProviderScope<NavKey>.featureAnalyticsSection(
     entry<Route.DailySurvey> {
         DailySurveyScreen(
             onBack = onBack,
-            // ИЗМЕНЕНО: теперь кнопка ведёт на статистику
             onFinished = onNavigateToStatistics
         )
     }

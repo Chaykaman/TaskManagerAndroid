@@ -19,6 +19,8 @@ sealed interface Route: NavKey {
 
     @Serializable data class TaskCreate(@Contextual val defaultDate: LocalDate? = null) : Route
     @Serializable data class TaskDetail(val taskId: Int) : Route
+
+    @Serializable data object Settings : Route
 }
 
 val TOP_LEVEL_ROUTES = mapOf<NavKey, NavBarItem>(

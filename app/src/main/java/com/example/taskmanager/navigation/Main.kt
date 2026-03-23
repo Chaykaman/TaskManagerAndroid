@@ -34,9 +34,9 @@ fun Main() {
         )
         featureMenuSection(
             onSurveyClick = { navigator.navigate(Route.DailySurvey) },
-            onStatisticsClick = { navigator.navigate(Route.Statistics) }
+            onStatisticsClick = { navigator.navigate(Route.Statistics) },
+            onAppSettingsClick = { navigator.navigate(Route.Settings) }
         )
-        // ИЗМЕНЕНО: передаём навигацию на статистику
         featureAnalyticsSection(
             onBack = { navigator.goBack() },
             onNavigateToStatistics = { navigator.navigate(Route.Statistics) }
