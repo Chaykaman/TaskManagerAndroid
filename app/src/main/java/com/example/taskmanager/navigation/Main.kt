@@ -32,7 +32,15 @@ fun Main() {
             onTaskClick = { taskId -> navigator.navigate(Route.TaskDetail(taskId)) },
             onAddTaskClick = { date -> navigator.navigate(Route.TaskCreate(date)) },
         )
-        featureMenuSection()
+        featureMenuSection(
+            onSurveyClick = { navigator.navigate(Route.DailySurvey) },
+            onStatisticsClick = { navigator.navigate(Route.Statistics) }
+        )
+        // ИЗМЕНЕНО: передаём навигацию на статистику
+        featureAnalyticsSection(
+            onBack = { navigator.goBack() },
+            onNavigateToStatistics = { navigator.navigate(Route.Statistics) }
+        )
     }
 
     val bottomSheetStrategy = remember { BottomSheetSceneStrategy<NavKey>() }

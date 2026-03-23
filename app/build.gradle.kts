@@ -111,4 +111,7 @@ dependencies {
     implementation(libs.calendar.compose)
     // Хранилище
     implementation(libs.androidx.datastore.preferences)
+
+    // Зависимость для графиков
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }
