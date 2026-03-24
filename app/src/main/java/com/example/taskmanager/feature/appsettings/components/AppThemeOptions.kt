@@ -16,7 +16,7 @@ import com.example.taskmanager.ui.theme.TaskManagerTheme
 
 @Composable
 fun AppThemeOptions(
-    activeAppTheme: AppTheme,
+    activeAppTheme: AppTheme?,
     onThemeChange: (AppTheme) -> Unit,
 ) {
     Row(
