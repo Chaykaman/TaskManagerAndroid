@@ -7,7 +7,9 @@ import com.example.taskmanager.data.local.entity.Task
 import com.example.taskmanager.data.local.entity.TaskFiltering
 import com.example.taskmanager.data.local.entity.TaskSorting
 import com.example.taskmanager.data.logger.TaskLogger
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 import java.time.LocalTime
@@ -52,7 +54,7 @@ class TaskRepositoryImpl @Inject constructor(
                 SortingDirection.DESC -> comparator.reversed()
             }
             tasks.sortedWith(directedComparator)
-        }
+        }.flowOn(Dispatchers.Default)
     }
 
     /**

@@ -138,18 +138,22 @@ class CalendarViewModel @Inject constructor(
      * Обновление статуса выполнения задачи
      * @param task Обновлённая задача
      */
-    suspend fun toggleTaskCompletion(task: Task) {
-        taskRepository.updateTask(
-            task = task.copy(isCompleted = !task.isCompleted)
-        )
+    fun toggleTaskCompletion(task: Task) {
+        viewModelScope.launch {
+            taskRepository.updateTask(
+                task = task.copy(isCompleted = !task.isCompleted)
+            )
+        }
     }
 
     /**
      * Удаление задачи
      * @param taskId Идентификатор задачи
      */
-    suspend fun deleteTask(taskId: Int) {
-        taskRepository.deleteTask(id = taskId)
+    fun deleteTask(taskId: Int) {
+        viewModelScope.launch {
+            taskRepository.deleteTask(id = taskId)
+        }
     }
 
 }

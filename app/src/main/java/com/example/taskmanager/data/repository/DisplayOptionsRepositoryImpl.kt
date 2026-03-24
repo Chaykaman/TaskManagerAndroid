@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.example.taskmanager.data.di.DisplayOptionsDataStore
 import com.example.taskmanager.data.local.entity.SortingDirection
 import com.example.taskmanager.data.local.entity.SortingField
 import com.example.taskmanager.data.local.entity.TaskFiltering
@@ -15,7 +16,7 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class DisplayOptionsRepositoryImpl @Inject constructor(
-    private val dataStore: DataStore<Preferences>,
+    @DisplayOptionsDataStore private val dataStore: DataStore<Preferences>,
 ) : DisplayOptionsRepository {
 
     init {

@@ -28,9 +28,7 @@ fun TasksDisplayScreen(
         ) {
             GroupingDisplayContent(
                 activeGrouping = activeGrouping,
-                onGroupingField = { groupingField ->
-                    viewModel.setGrouping(groupingField)
-                }
+                onGroupingField = viewModel::setGrouping
             )
         }
     }
@@ -42,9 +40,7 @@ fun TasksDisplayScreen(
         ) {
             SortingDisplayContent(
                 activeSorting = activeSorting,
-                onSortingField = { sortingField ->
-                    viewModel.setSorting(sortingField)
-                }
+                onSortingField = viewModel::setSorting
             )
         }
     }

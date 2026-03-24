@@ -1,5 +1,7 @@
 package com.example.taskmanager.data.di
 
+import com.example.taskmanager.data.repository.AppSettingsRepository
+import com.example.taskmanager.data.repository.AppSettingsRepositoryImpl
 import com.example.taskmanager.data.repository.DisplayOptionsRepository
 import com.example.taskmanager.data.repository.DisplayOptionsRepositoryImpl
 import com.example.taskmanager.data.repository.TaskRepository
@@ -25,4 +27,10 @@ abstract class TaskRepositoryModule {
     abstract fun bindDisplayOptionsRepository(
         impl: DisplayOptionsRepositoryImpl
     ): DisplayOptionsRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindAppSettingsRepository(
+        impl: AppSettingsRepositoryImpl
+    ): AppSettingsRepository
 }
