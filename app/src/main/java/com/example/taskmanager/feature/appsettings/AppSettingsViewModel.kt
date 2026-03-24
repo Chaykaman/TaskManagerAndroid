@@ -26,14 +26,15 @@ class AppSettingsViewModel @Inject constructor(
     ) { theme, fabAlignment ->
         AppSettingsUiState(
             appTheme = theme,
-            fabAlignment = fabAlignment
+            fabAlignment = fabAlignment,
+            isLoading = false
         )
     }
         .flowOn(Dispatchers.IO)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = AppSettingsUiState()
+            initialValue = AppSettingsUiState(isLoading = true)
     )
 
     /**

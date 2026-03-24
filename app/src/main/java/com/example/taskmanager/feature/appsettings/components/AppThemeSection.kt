@@ -10,7 +10,7 @@ import com.example.taskmanager.data.local.entity.AppTheme
 
 @Composable
 fun AppThemeSection(
-    activeAppTheme: AppTheme,
+    activeAppTheme: AppTheme?,
     onThemeChange: (AppTheme) -> Unit
 ) {
     Column(
@@ -31,6 +31,7 @@ fun AppThemeSection(
                 AppTheme.LIGHT -> "Приложение всегда использует светлую тему"
                 AppTheme.DARK -> "Приложение всегда использует тёмную тему"
                 AppTheme.SYSTEM -> "Тема зависит от настроек устройства"
+                else -> "Тема зависит от настроек устройства"
             },
             style = MaterialTheme.typography.bodySmall,
         )
