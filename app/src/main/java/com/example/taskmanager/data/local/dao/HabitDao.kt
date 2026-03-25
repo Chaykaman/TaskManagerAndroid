@@ -10,6 +10,7 @@ import com.example.taskmanager.data.local.entity.Task
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
+@Dao
 interface HabitDao {
     @Insert
     suspend fun insertHabit(habit: Habit)
@@ -17,7 +18,7 @@ interface HabitDao {
     @Query("SELECT * FROM habits")
     suspend fun getAllHabits(): List<Habit>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLog(log: HabitLog)
 
     @Query("""

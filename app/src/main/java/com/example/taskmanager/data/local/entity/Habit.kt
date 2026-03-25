@@ -1,6 +1,7 @@
 package com.example.taskmanager.data.local.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.taskmanager.feature.calendar.components.DaysOfWeekRow
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -21,7 +22,7 @@ data class Habit (
     // Например: каждый день / через день (на будущее)
     var frequency: String = "DAILY",
 
-    var daysOfWeek: List<Int>, // 1-7 (Пн-Вс)
+    var daysOfWeek: List<DayOfTheWeek>, // 1-7 (Пн-Вс)
 
     // Дата создания
     var createdAt: LocalDateTime = LocalDateTime.now(),

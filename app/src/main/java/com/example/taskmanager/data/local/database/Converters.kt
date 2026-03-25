@@ -1,6 +1,7 @@
 package com.example.taskmanager.data.local.database
 
 import androidx.room.TypeConverter
+import com.example.taskmanager.data.local.entity.DayOfTheWeek
 import com.example.taskmanager.data.local.entity.Priority
 import com.example.taskmanager.data.local.entity.Status
 import java.time.LocalDate
@@ -8,6 +9,22 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 class Converters {
+    @TypeConverter
+    fun fromDayOfWeekList(list: List<DayOfTheWeek>?): String? {
+        return list?.joinToString(",") { it.id.toString() }
+    }
+
+    @TypeConverter
+    fun toDayOfWeekList(value: String?): List<DayOfTheWeek>? {
+        return value?.split(",")?.map { id ->
+            DayOfTheWeek.entries.first { it.id == id.toInt() }
+        }
+    }
+    @TypeConverter
+    fun fromDayOfTheWeek(dayOfTheWeek: DayOfTheWeek): Int = dayOfTheWeek.id
+
+    @TypeConverter
+    fun toDayOfTheWeek(value: Int): DayOfTheWeek = DayOfTheWeek.entries.first{it.id == value}
 
     @TypeConverter
     fun fromStatus(status: Status): Int = status.id
