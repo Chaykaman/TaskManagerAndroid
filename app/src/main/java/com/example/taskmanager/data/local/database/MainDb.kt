@@ -8,6 +8,7 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.taskmanager.data.local.dao.Dao
+import com.example.taskmanager.data.local.dao.HabitDao
 import com.example.taskmanager.data.local.dao.SurveyDao
 import com.example.taskmanager.data.local.dao.TaskDao
 import com.example.taskmanager.data.local.entity.Habit
@@ -27,6 +28,8 @@ abstract class MainDb : RoomDatabase() {
 
     abstract fun getTaskDao(): TaskDao
     abstract fun getSurveyDao(): SurveyDao
+
+    abstract fun getHabitDao(): HabitDao
 
     companion object {
 
