@@ -1,15 +1,18 @@
 package com.example.taskmanager.data.repository
 
 import com.example.taskmanager.data.local.dao.TaskDao
-import com.example.taskmanager.data.local.entity.SortDirection
-import com.example.taskmanager.data.local.entity.SortField
+import com.example.taskmanager.data.local.entity.SortingDirection
+import com.example.taskmanager.data.local.entity.SortingField
 import com.example.taskmanager.data.local.entity.Task
-import com.example.taskmanager.data.local.entity.TaskFilter
-import com.example.taskmanager.data.local.entity.TaskSort
+import com.example.taskmanager.data.local.entity.TaskFiltering
+import com.example.taskmanager.data.local.entity.TaskSorting
 import com.example.taskmanager.data.logger.TaskLogger
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
+import java.time.LocalTime
 import javax.inject.Inject
 
 class TaskRepositoryImpl @Inject constructor(
@@ -22,33 +25,36 @@ class TaskRepositoryImpl @Inject constructor(
 
     /**
      * Получение списка задач с фильтрацией и сортировкой.
-     * @param filter Фильтр задач (все, активные, выполненные, просроченные).
-     * @param sort Сортировка задач (по возрастанию, по убыванию)
+     * @param filtering Фильтр задач (все, активные, выполненные, просроченные).
+     * @param sorting Сортировка задач (по возрастанию, по убыванию)
      */
     override fun getTasks(
-        filter: TaskFilter,
-        sort: TaskSort
+        filtering: TaskFiltering,
+        sorting: TaskSorting
     ): Flow<List<Task>> {
-        val tasksFlow = when (filter) {
-            TaskFilter.ALL -> taskDao.getAllTasks()
-            TaskFilter.ACTIVE -> taskDao.getActiveTasks()
-            TaskFilter.COMPLETED -> taskDao.getCompletedTasks()
-            TaskFilter.OVERDUE -> taskDao.getOverdueTasks(LocalDate.now().toString())
+        val tasksFlow = when (filtering) {
+            TaskFiltering.ALL -> taskDao.getAllTasks()
+            TaskFiltering.ACTIVE -> taskDao.getActiveTasks()
+            TaskFiltering.COMPLETED -> taskDao.getCompletedTasks()
+            TaskFiltering.OVERDUE -> taskDao.getOverdueTasks(
+                date = LocalDate.now().toString(),
+                time = LocalTime.now().toString()
+            )
         }
 
         return tasksFlow.map { tasks ->
-            val comparator = when (sort.field) {
-                SortField.ID -> compareBy<Task> { it.id }
-                SortField.TITLE -> compareBy { it.title.lowercase() }
-                SortField.DUE_DATE -> compareBy(nullsLast()) { task -> task.dueDate }
-                SortField.PRIORITY -> compareBy { it.priority.ordinal }
+            val comparator = when (sorting.field) {
+                SortingField.ID -> compareBy<Task> { it.id }
+                SortingField.TITLE -> compareBy { it.title.lowercase() }
+                SortingField.DUE_DATE -> compareBy(nullsLast()) { task -> task.dueDate }
+                SortingField.PRIORITY -> compareBy { it.priority.id }
             }
-            val directedComparator = when (sort.direction) {
-                SortDirection.ASC -> comparator
-                SortDirection.DESC -> comparator.reversed()
+            val directedComparator = when (sorting.direction) {
+                SortingDirection.ASC -> comparator
+                SortingDirection.DESC -> comparator.reversed()
             }
             tasks.sortedWith(directedComparator)
-        }
+        }.flowOn(Dispatchers.Default)
     }
 
     /**

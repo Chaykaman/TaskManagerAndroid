@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.taskmanager.data.local.entity.Task
 import com.example.taskmanager.data.logger.TaskLogger
 import com.example.taskmanager.data.repository.TaskRepository
+import com.example.taskmanager.feature.tasklist.TaskListItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -67,7 +68,9 @@ class CalendarViewModel @Inject constructor(
 
                         _uiState.update { currentState ->
                             currentState.copy(
-                                tasksForSelectedDate = tasksForDay,
+                                tasksForSelectedDate = tasksForDay.map { task ->
+                                    TaskListItem.TaskItem(task)
+                                },
                                 daysWithTasks = daysWithTasks,
                                 isLoading = false
                             )
@@ -135,18 +138,22 @@ class CalendarViewModel @Inject constructor(
      * Обновление статуса выполнения задачи
      * @param task Обновлённая задача
      */
-    suspend fun toggleTaskCompletion(task: Task) {
-        taskRepository.updateTask(
-            task = task.copy(isCompleted = !task.isCompleted)
-        )
+    fun toggleTaskCompletion(task: Task) {
+        viewModelScope.launch {
+            taskRepository.updateTask(
+                task = task.copy(isCompleted = !task.isCompleted)
+            )
+        }
     }
 
     /**
      * Удаление задачи
      * @param taskId Идентификатор задачи
      */
-    suspend fun deleteTask(taskId: Int) {
-        taskRepository.deleteTask(id = taskId)
+    fun deleteTask(taskId: Int) {
+        viewModelScope.launch {
+            taskRepository.deleteTask(id = taskId)
+        }
     }
 
 }

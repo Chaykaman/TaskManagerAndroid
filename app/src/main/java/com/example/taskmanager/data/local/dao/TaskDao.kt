@@ -22,10 +22,14 @@ interface TaskDao {
 
     @Query("""
         SELECT * FROM tasks 
-        WHERE dueDate < :date AND isCompleted = 0 
-        ORDER BY dueDate ASC
+        WHERE isCompleted = 0 AND
+        (
+            dueDate < :date OR
+            (dueDate = :date AND dueTime < :time)
+        )
+        ORDER BY dueDate ASC, dueTime ASC
     """)
-    fun getOverdueTasks(date: String): Flow<List<Task>>
+    fun getOverdueTasks(date: String, time: String): Flow<List<Task>>
 
     @Query("SELECT * FROM tasks WHERE id = :taskId")
     suspend fun getTaskById(taskId: Int): Task?

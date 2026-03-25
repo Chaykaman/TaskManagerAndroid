@@ -11,6 +11,9 @@ import com.example.taskmanager.feature.taskcreate.TaskCreateScreen
 import com.example.taskmanager.feature.taskdetail.TaskDetailScreen
 import com.example.taskmanager.feature.tasklist.TaskListScreen
 import java.time.LocalDate
+import com.example.taskmanager.feature.analytics.DailySurveyScreen
+import com.example.taskmanager.feature.analytics.StatisticsScreen
+import com.example.taskmanager.feature.appsettings.AppSettingsScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 fun EntryProviderScope<NavKey>.featureTasksSection(
@@ -62,8 +65,41 @@ fun EntryProviderScope<NavKey>.featureCalendarSection(
     }
 }
 
-fun EntryProviderScope<NavKey>.featureMenuSection() {
+@OptIn(ExperimentalMaterial3Api::class)
+fun EntryProviderScope<NavKey>.featureMenuSection(
+    onSurveyClick: () -> Unit,
+    onStatisticsClick: () -> Unit,
+    onAppSettingsClick: () -> Unit
+) {
     entry<Route.Menu> {
-        MenuScreen()
+        MenuScreen(
+            onSurveyClick = onSurveyClick,
+            onStatisticsClick = onStatisticsClick,
+            onAppSettingsClick = onAppSettingsClick
+        )
+    }
+
+    // Страница настроек
+    entry<Route.Settings>(
+        metadata = BottomSheetSceneStrategy.bottomSheet(
+            modifier = Modifier.fillMaxHeight()
+        )
+    ) {
+        AppSettingsScreen()
+    }
+}
+
+fun EntryProviderScope<NavKey>.featureAnalyticsSection(
+    onBack: () -> Unit,
+    onNavigateToStatistics: () -> Unit
+) {
+    entry<Route.DailySurvey> {
+        DailySurveyScreen(
+            onBack = onBack,
+            onFinished = onNavigateToStatistics
+        )
+    }
+    entry<Route.Statistics> {
+        StatisticsScreen(onBack = onBack)
     }
 }

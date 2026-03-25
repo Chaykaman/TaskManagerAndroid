@@ -3,34 +3,36 @@ package com.example.taskmanager.feature.tasklist
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.taskmanager.data.local.entity.Priority
-import com.example.taskmanager.data.local.entity.SortDirection
-import com.example.taskmanager.data.local.entity.SortField
+import com.example.taskmanager.data.local.entity.SortingDirection
+import com.example.taskmanager.data.local.entity.SortingField
 import com.example.taskmanager.data.local.entity.Task
-import com.example.taskmanager.data.local.entity.TaskFilter
-import com.example.taskmanager.data.local.entity.TaskSort
+import com.example.taskmanager.data.local.entity.TaskFiltering
+import com.example.taskmanager.data.local.entity.TaskGrouping
+import com.example.taskmanager.data.local.entity.TaskSorting
 import com.example.taskmanager.data.logger.TaskLogger
+import com.example.taskmanager.data.repository.DisplayOptionsRepository
 import com.example.taskmanager.data.repository.TaskRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
 import javax.inject.Inject
 
 @HiltViewModel
 class TaskListViewModel @Inject constructor(
-    private val taskRepository: TaskRepository
+    private val taskRepository: TaskRepository,
+    private val optionsRepository: DisplayOptionsRepository
 ) : ViewModel() {
-
-    private val _activeFilter = MutableStateFlow(TaskFilter.ALL)
-    private val _activeSort = MutableStateFlow(TaskSort())
 
     init {
         TaskLogger.i("[TaskListViewModel] Инициализирован")
@@ -38,46 +40,101 @@ class TaskListViewModel @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<TaskListUiState> = combine(
-        _activeFilter,
-        _activeSort
-    ) { filter, sort -> Pair(filter, sort) }
-        .flatMapLatest { (filter, sort) ->
-            taskRepository.getTasks(filter, sort).map { tasks ->
-                TaskListUiState(
-                    tasks = tasks,
-                    activeFilter = filter,
-                    activeSort = sort
-                )
-            }
+        optionsRepository.filtering,
+        optionsRepository.sorting,
+        optionsRepository.grouping
+    ) { filtering, sorting, grouping ->
+        Triple(filtering, sorting, grouping)
+    }
+        .flatMapLatest { (filtering, sorting, grouping) ->
+            taskRepository.getTasks(filtering, sorting)
+                .map { tasks ->
+                    TaskListUiState(
+                        items = groupTasks(tasks, grouping),
+                        activeFiltering = filtering,
+                        activeSorting = sorting,
+                        activeGrouping = grouping
+                    )
+                }
+                .catch { exception ->
+                    emit(
+                        TaskListUiState(
+                            errorMessage = "Не удалось загрузить задачи: ${exception.message}"
+                        )
+                    )
+                }
         }
+        .flowOn(Dispatchers.Default)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = TaskListUiState(isLoading = true)
         )
 
-    /**
-     * Установка фильтра задач
-     * @param filter Фильтр задач
-     */
-    fun setFilter(filter: TaskFilter) {
-        _activeFilter.update { filter }
+    private fun groupTasks(tasks: List<Task>, grouping: TaskGrouping): List<TaskListItem> {
+        val grouped: Map<String, List<Task>> = when (grouping) {
+            TaskGrouping.TITLE -> tasks
+                .groupBy { task -> task.title.firstOrNull()?.uppercaseChar()?.toString() ?: "?" }
+                .toSortedMap()
+
+            TaskGrouping.DUE_DATE -> tasks
+                .groupBy { task -> task.formattedDueDate() }
+                .entries
+                .sortedBy { it.value.firstOrNull()?.dueDate ?: LocalDate.MAX }
+                .associate { it.key to it.value }
+
+            TaskGrouping.PRIORITY -> tasks
+                .groupBy { task -> task.priority.label }
+                .entries
+                .sortedBy { (label, _) -> Priority.entries.first { it.label == label }.id }
+                .associate { it.key to it.value }
+
+            TaskGrouping.NONE -> return tasks.map { TaskListItem.TaskItem(it) }
+        }
+
+        return grouped.flatMap { (groupTitle, groupTasks) ->
+            listOf(TaskListItem.Header(groupTitle)) + groupTasks.map { TaskListItem.TaskItem(it) }
+        }
     }
 
     /**
-     * Установка поля для сортировки задач
-     * @param field Поле для сортировки
+     * Установка фильтра задач
+     * @param filtering Фильтр задач
      */
-    fun onSortFieldSelected(field: SortField) {
-        _activeSort.update { currentSort ->
-            if (currentSort.field == field) {
-                currentSort.copy(
-                    direction = if (currentSort.direction == SortDirection.ASC)
-                        SortDirection.DESC else SortDirection.ASC
+    fun setFilter(filtering: TaskFiltering) {
+        viewModelScope.launch {
+            optionsRepository.saveFiltering(filtering)
+        }
+    }
+
+    /**
+     * Установка группировки задач
+     * @param grouping Поле группировки
+     */
+    fun setGrouping(grouping: TaskGrouping) {
+        viewModelScope.launch {
+            optionsRepository.saveGrouping(grouping)
+        }
+    }
+
+    /**
+     * Установка сортировки задач
+     * @param field Поле сортировки
+     */
+    fun setSorting(field: SortingField) {
+        viewModelScope.launch {
+            val currentSorting = uiState.value.activeSorting
+
+            val newSorting = if (currentSorting.field == field) {
+                currentSorting.copy(
+                    direction = if (currentSorting.direction == SortingDirection.ASC)
+                        SortingDirection.DESC else SortingDirection.ASC
                 )
             } else {
-                TaskSort(field = field, direction = SortDirection.ASC)
+                TaskSorting(field = field, direction = SortingDirection.ASC)
             }
+
+            optionsRepository.saveSorting(newSorting)
         }
     }
 
@@ -89,7 +146,7 @@ class TaskListViewModel @Inject constructor(
      * @param dueDate Дата выполнения задачи
      * @param dueTime Время выполнения задачи
      */
-    suspend fun addTask(
+    fun addTask(
         title: String,
         description: String = "",
         priority: Priority = Priority.PRIORITY_4,
@@ -108,24 +165,30 @@ class TaskListViewModel @Inject constructor(
         )
 
         // Добавляем задачу
-        taskRepository.addTask(newTask)
+        viewModelScope.launch {
+            taskRepository.addTask(newTask)
+        }
     }
 
     /**
      * Обновление статуса выполнения задачи
      * @param task Обновлённая задача
      */
-    suspend fun toggleTaskCompletion(task: Task) {
-        taskRepository.updateTask(
-            task = task.copy(isCompleted = !task.isCompleted)
-        )
+    fun toggleTaskCompletion(task: Task) {
+        viewModelScope.launch {
+            taskRepository.updateTask(
+                task = task.copy(isCompleted = !task.isCompleted)
+            )
+        }
     }
 
     /**
      * Удаление задачи
      * @param taskId Идентификатор задачи
      */
-    suspend fun deleteTask(taskId: Int) {
-        taskRepository.deleteTask(id = taskId)
+    fun deleteTask(taskId: Int) {
+        viewModelScope.launch {
+            taskRepository.deleteTask(id = taskId)
+        }
     }
 }

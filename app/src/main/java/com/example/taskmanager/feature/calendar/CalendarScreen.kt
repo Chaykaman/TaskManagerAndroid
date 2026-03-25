@@ -10,16 +10,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewModelScope
-import com.example.taskmanager.feature.ScreenScaffold
 import com.example.taskmanager.feature.calendar.components.CalendarTopAppBar
+import com.example.taskmanager.feature.common.ScreenScaffold
+import com.example.taskmanager.feature.common.toFabPosition
 import com.example.taskmanager.feature.tasklist.components.FloatingAddButton
+import com.example.taskmanager.feature.common.LocalFabAlignment
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.kizitonwose.calendar.core.OutDateStyle
 import com.kizitonwose.calendar.core.atStartOfMonth
 import com.kizitonwose.calendar.core.yearMonth
-import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
 
@@ -29,6 +29,8 @@ fun CalendarScreen(
     onTaskClick: (Int) -> Unit,
     onAddTaskClick: (LocalDate) -> Unit,
 ) {
+    val fabAlignment = LocalFabAlignment.current
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val currentDate = remember { LocalDate.now() }
@@ -55,7 +57,7 @@ fun CalendarScreen(
         topBar = {
             CalendarTopAppBar(
                 calendarMode = uiState.viewMode,
-                onCalendarModeChange = { mode -> viewModel.onViewModeChanged(mode) },
+                onCalendarModeChange = viewModel::onViewModeChanged,
                 onTodayClick = { viewModel.onDateSelected(LocalDate.now()) }
             )
         },
@@ -64,6 +66,7 @@ fun CalendarScreen(
                 onClick = { onAddTaskClick(uiState.selectedDate) }
             )
         },
+        floatingActionButtonPosition = fabAlignment.toFabPosition()
     ) { padding ->
         Column(
             modifier = Modifier
@@ -77,7 +80,7 @@ fun CalendarScreen(
                 monthState = monthState,
                 weekState = weekState,
                 currentDate = currentDate,
-                onDateSelected = { date -> viewModel.onDateSelected(date) },
+                onDateSelected = viewModel::onDateSelected,
                 onPreviousClick = {
                     when (uiState.viewMode) {
                         CalendarViewMode.MONTH ->
@@ -95,16 +98,8 @@ fun CalendarScreen(
                     }
                 },
                 onTaskClick = onTaskClick,
-                onToggleDone = { task ->
-                    viewModel.viewModelScope.launch {
-                        viewModel.toggleTaskCompletion(task)
-                    }
-                },
-                onRemove = { taskId ->
-                    viewModel.viewModelScope.launch {
-                        viewModel.deleteTask(taskId)
-                    }
-                }
+                onToggleDone = viewModel::toggleTaskCompletion,
+                onRemove = viewModel::deleteTask
             )
         }
     }
