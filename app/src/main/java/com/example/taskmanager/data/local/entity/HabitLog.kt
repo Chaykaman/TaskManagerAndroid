@@ -1,0 +1,23 @@
+package com.example.taskmanager.data.local.entity
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
+import java.time.LocalDate
+
+@Entity(
+    tableName = "habitLogs",
+    indices = [Index(value = ["habitId", "date"], unique = true)]
+)
+data class HabitLog (
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+
+    val habitId: Int, // связь с Habit
+
+    val date: LocalDate,
+
+    val isCompleted: Boolean = true,
+
+){
+
+}
