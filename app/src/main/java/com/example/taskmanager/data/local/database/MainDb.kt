@@ -10,12 +10,14 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.taskmanager.data.local.dao.Dao
 import com.example.taskmanager.data.local.dao.SurveyDao
 import com.example.taskmanager.data.local.dao.TaskDao
+import com.example.taskmanager.data.local.entity.Habit
+import com.example.taskmanager.data.local.entity.HabitLog
 import com.example.taskmanager.data.local.entity.SurveyResult
 import com.example.taskmanager.data.local.entity.Task
 
 @Database(
-    entities = [Task::class, SurveyResult::class],
-    version = 2,
+    entities = [Task::class, SurveyResult::class, Habit::class, HabitLog::class],
+    version = 3,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

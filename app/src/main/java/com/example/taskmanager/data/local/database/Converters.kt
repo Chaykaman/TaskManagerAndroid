@@ -38,4 +38,14 @@ class Converters {
 
     @TypeConverter
     fun toLocalDateTime(value: String?): LocalDateTime? = value?.let { LocalDateTime.parse(it) }
+
+    @TypeConverter
+    fun fromIntList(value: List<Int>?): String? {
+        return value?.joinToString(",")
+    }
+
+    @TypeConverter
+    fun toIntList(value: String?): List<Int>? {
+        return value?.split(",")?.map { it.toInt() }
+    }
 }
