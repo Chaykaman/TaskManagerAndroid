@@ -11,23 +11,27 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.taskmanager.data.local.entity.Task
-import com.example.taskmanager.ui.theme.TaskManagerTheme
 import java.time.LocalDate
 
 @Composable
 fun TaskCard(
-    task: Task,
-    onClick: (Int) -> Unit,
-    onToggleDone: (Task) -> Unit,
+    title: String,
+    description: String,
+    isCompleted: Boolean,
+    dueDate: LocalDate?,
+    formattedDueDate: String,
+    isOverdue: Boolean,
+    color: Color,
+    onClick: () -> Unit,
+    onToggleDone: () -> Unit,
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(
-                onClick = { onClick(task.id) }
+                onClick = onClick
             ),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -39,39 +43,22 @@ fun TaskCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
-                onClick = { onToggleDone(task) }
+                onClick = onToggleDone
             ) {
                 AnimatedDoneButton(
-                    isCompleted = task.isCompleted,
-                    color = task.priority.color
+                    isCompleted = isCompleted,
+                    color = color
                 )
             }
 
             TaskCardTextFields(
-                title = task.title,
-                description = task.description,
-                dueDate = task.dueDate,
-                formattedDueDate = task.formattedDueDate().toString(),
-                isCompleted = task.isCompleted,
-                isOverdue = task.isOverdue()
+                title = title,
+                description = description,
+                dueDate = dueDate,
+                formattedDueDate = formattedDueDate,
+                isCompleted = isCompleted,
+                isOverdue = isOverdue
             )
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun TaskCardPreview() {
-    TaskManagerTheme {
-        TaskCard(
-            task = Task(
-                title = "Заголовок задачи",
-                description = "Описание задачи",
-                isCompleted = false,
-                dueDate = LocalDate.now(),
-            ),
-            onClick = {},
-            onToggleDone = {}
-        )
     }
 }
