@@ -2,4 +2,11 @@
 <resources>
 
     <style name="Theme.TaskManager" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.TaskManager.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenIconBackgroundColor">@color/splash_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_logo</item>
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+        <item name="postSplashScreenTheme">@style/Theme.TaskManager</item>
+    </style>
 </resources>

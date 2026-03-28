@@ -1,6 +1,7 @@
 package com.example.taskmanager.feature.taskdetail
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.taskmanager.data.local.entity.Priority
 import com.example.taskmanager.data.local.entity.Task
 import com.example.taskmanager.data.logger.TaskLogger
@@ -10,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
 import javax.inject.Inject
@@ -220,7 +222,7 @@ class TaskDetailViewModel @Inject constructor(
     /**
      * Сохранение изменений
      */
-    suspend fun saveChanges() {
+    fun saveChanges() {
         val currentState = _uiState.value
         val original = currentState.originalTask ?: return
 
@@ -242,7 +244,9 @@ class TaskDetailViewModel @Inject constructor(
         )
 
         // Обновляем задачу
-        taskRepository.updateTask(task = updatedTask)
+        viewModelScope.launch {
+            taskRepository.updateTask(task = updatedTask)
+        }
 
         // Обновляем UI и сбрасываем флаг
         _uiState.update {

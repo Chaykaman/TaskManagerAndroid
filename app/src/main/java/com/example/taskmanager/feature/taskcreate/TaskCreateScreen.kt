@@ -8,10 +8,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusRequester
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.taskmanager.data.local.entity.Priority
 import com.example.taskmanager.feature.tasklist.TaskListViewModel
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -51,15 +49,13 @@ fun TaskCreateScreen(
             }
         },
         onSubmit = {
-            viewModel.viewModelScope.launch {
-                viewModel.addTask(
-                    title = taskTitle,
-                    description = taskDescription,
-                    priority = taskPriority,
-                    dueDate = taskDate,
-                    dueTime = taskTime
-                )
-            }
+            viewModel.addTask(
+                title = taskTitle,
+                description = taskDescription,
+                priority = taskPriority,
+                dueDate = taskDate,
+                dueTime = taskTime
+            )
             onBack()
         }
     )

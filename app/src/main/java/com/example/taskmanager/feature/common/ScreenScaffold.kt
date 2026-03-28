@@ -1,4 +1,4 @@
-package com.example.taskmanager.feature
+package com.example.taskmanager.feature.common
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets

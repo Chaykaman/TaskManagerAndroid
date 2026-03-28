@@ -5,8 +5,10 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.taskmanager.data.local.entity.DayTaskCount
 import com.example.taskmanager.data.local.entity.Task
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDate
 
 @Dao
 interface TaskDao {
@@ -48,4 +50,27 @@ interface TaskDao {
 
     @Query("DELETE FROM tasks WHERE id = :taskId")
     suspend fun deleteTaskById(taskId: Int)
+
+    @Query("""
+    SELECT completedAt as date, COUNT(*) as completedCount
+    FROM tasks
+    WHERE isCompleted = 1 
+    AND completedAt IS NOT NULL
+    AND completedAt BETWEEN :startDate AND :endDate
+    GROUP BY completedAt
+    ORDER BY completedAt ASC
+    """)
+    suspend fun getCompletedTasksPerDay(
+        startDate: LocalDate,
+        endDate: LocalDate
+    ): List<DayTaskCount>
+
+    @Query("""
+    SELECT DISTINCT completedAt
+    FROM tasks
+    WHERE isCompleted = 1
+    AND completedAt IS NOT NULL
+    ORDER BY completedAt DESC
+    """)
+    suspend fun getAllCompletedDates(): List<LocalDate>
 }
