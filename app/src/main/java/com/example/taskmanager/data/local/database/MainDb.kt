@@ -16,10 +16,11 @@ import com.example.taskmanager.data.local.entity.Task
 import com.example.taskmanager.data.local.database.migrations.MIGRATION_1_2
 import com.example.taskmanager.data.local.database.migrations.MIGRATION_2_3
 import com.example.taskmanager.data.local.database.migrations.MIGRATION_3_4
+import com.example.taskmanager.data.local.database.migrations.MIGRATION_4_5
 
 @Database(
     entities = [Task::class, SurveyResult::class, Habit::class, HabitLog::class],
-    version = 4,  // последняя версия базы
+    version = 5,  // последняя версия базы
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -41,7 +42,7 @@ abstract class MainDb : RoomDatabase() {
                     MainDb::class.java,
                     "task.db"
                 )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
                     .build().also { INSTANCE = it }
             }
         }

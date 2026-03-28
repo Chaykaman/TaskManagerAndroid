@@ -42,7 +42,7 @@ fun Main() {
         featureMenuSection(
             onSurveyClick = { navigator.navigate(Route.DailySurvey) },
             onStatisticsClick = { navigator.navigate(Route.Statistics) },
-            onProductivityClick = { navigator.navigate(Route.Productivity) },
+            onProductivityClick = { navigator.navigate(Route.Streak) },
             onAchievementsClick = { navigator.navigate(Route.Achievements) },
             onAppSettingsClick = { navigator.navigate(Route.Settings) }
         )

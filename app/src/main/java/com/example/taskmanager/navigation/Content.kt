@@ -19,7 +19,7 @@ import com.example.taskmanager.feature.habits.habitform.HabitFormScreen
 import com.example.taskmanager.feature.habits.habitlist.HabitListScreen
 import com.example.taskmanager.feature.habits.habitstats.HabitStatsScreen
 import com.example.taskmanager.feature.habits.myhabitlist.MyHabitsScreen
-import com.example.taskmanager.feature.productivity.ProductivityScreen
+import com.example.taskmanager.feature.streak.StreakScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 fun EntryProviderScope<NavKey>.featureTasksSection(
@@ -160,8 +160,8 @@ fun EntryProviderScope<NavKey>.featureProductivitySection(
     onBack: () -> Unit,
 ) {
     // Продуктивность
-    entry<Route.Productivity> {
-        ProductivityScreen(
+    entry<Route.Streak> {
+        StreakScreen(
             onBack = onBack
         )
     }

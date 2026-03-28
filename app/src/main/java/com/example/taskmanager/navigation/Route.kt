@@ -35,7 +35,7 @@ sealed interface Route: NavKey {
     @Serializable data object Statistics : Route
 
     // Активность и достижения
-    @Serializable data object Productivity : Route
+    @Serializable data object Streak : Route
     @Serializable data object Achievements : Route
 
 }

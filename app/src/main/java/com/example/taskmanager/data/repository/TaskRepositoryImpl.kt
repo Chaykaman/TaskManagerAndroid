@@ -1,6 +1,7 @@
 package com.example.taskmanager.data.repository
 
 import com.example.taskmanager.data.local.dao.TaskDao
+import com.example.taskmanager.data.local.entity.DayTaskCount
 import com.example.taskmanager.data.local.entity.SortingDirection
 import com.example.taskmanager.data.local.entity.SortingField
 import com.example.taskmanager.data.local.entity.Task
@@ -102,7 +103,11 @@ class TaskRepositoryImpl @Inject constructor(
      * @param task Обновлённая задача.
      */
     override suspend fun updateTask(task: Task) {
-        taskDao.insertTask(task = task)
+        taskDao.insertTask(
+            task = task.copy(
+                completedAt = if (task.isCompleted) LocalDate.now() else null
+            )
+        )
         TaskLogger.i("[TaskRepositoryImpl] Задача '${task.title}' (id=${task.id}) обновлена")
     }
 
@@ -114,4 +119,18 @@ class TaskRepositoryImpl @Inject constructor(
         taskDao.deleteTaskById(taskId = id)
         TaskLogger.i("[TaskRepositoryImpl] Задача под номером '${id}' удалена")
     }
+
+    /**
+     * Получение всех дат, когда были выполнены задачи.
+     */
+    override suspend fun getAllCompletedDates(): List<LocalDate> =
+        taskDao.getAllCompletedDates()
+
+    /**
+     * Получение количества выполненных задач в каждый день в заданном диапазоне дат.
+     */
+    override suspend fun getCompletedTasksPerDay(
+        startDate: LocalDate,
+        endDate: LocalDate
+    ): List<DayTaskCount> = taskDao.getCompletedTasksPerDay(startDate, endDate)
 }
