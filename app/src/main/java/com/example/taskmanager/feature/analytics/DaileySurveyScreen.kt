@@ -50,10 +50,8 @@ fun DailySurveyScreen(
     viewModel: SurveyViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
-    // НОВОЕ: состояние диалога подтверждения
     var showRestartDialog by remember { mutableStateOf(false) }
 
-    // НОВОЕ: диалог подтверждения перезапуска
     if (showRestartDialog) {
         AlertDialog(
             onDismissRequest = { showRestartDialog = false },
@@ -122,7 +120,6 @@ fun DailySurveyScreen(
                             Text("Перейти к статистике")
                         }
                         Spacer(modifier = Modifier.height(8.dp))
-                        // НОВОЕ: кнопка перезапуска
                         OutlinedButton(
                             onClick = { showRestartDialog = true },
                             modifier = Modifier.fillMaxWidth()
@@ -141,7 +138,6 @@ fun DailySurveyScreen(
                 FinishedContent(
                     onStatisticsClick = onFinished,
                     onBack = onBack,
-                    // НОВОЕ: передаём колбэк для показа диалога
                     onRestart = { showRestartDialog = true }
                 )
             }
@@ -218,7 +214,6 @@ fun DailySurveyScreen(
     }
 }
 
-// ИЗМЕНЕНО: добавлен параметр onRestart
 @Composable
 private fun FinishedContent(
     onStatisticsClick: () -> Unit,
@@ -245,7 +240,6 @@ private fun FinishedContent(
                 Text("Перейти к статистике")
             }
             Spacer(modifier = Modifier.height(8.dp))
-            // НОВОЕ: кнопка перезапуска
             OutlinedButton(onClick = onRestart, modifier = Modifier.fillMaxWidth()) {
                 Text("Пройти опрос заново")
             }
