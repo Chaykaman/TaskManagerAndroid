@@ -21,10 +21,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -46,8 +47,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.taskmanager.data.local.entity.Priority
+import com.example.taskmanager.feature.common.ScreenScaffold
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun StatisticsScreen(
     onBack: () -> Unit,
@@ -55,7 +57,7 @@ fun StatisticsScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
 
-    Scaffold(
+    ScreenScaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Статистика") },
@@ -69,14 +71,14 @@ fun StatisticsScreen(
     ) { padding ->
         if (state.isLoading) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
+                LoadingIndicator()
             }
         } else {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(16.dp)
+                    .padding(horizontal = 16.dp)
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
@@ -252,7 +254,13 @@ private fun LineChartCard(
     maxValue: Float,
     labels: List<String>
 ) {
-    Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp)) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             Text("На основе ответов опроса", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -328,7 +336,13 @@ private fun TimeOfDayChart(timeOfDay: Map<String, Int>) {
         "День" to Color(0xFF2196F3),
         "Вечер" to Color(0xFF9C27B0)
     )
-    Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp)) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text("Когда вы наиболее продуктивны", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             Text("На основе ответов опроса", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -343,7 +357,7 @@ private fun TimeOfDayChart(timeOfDay: Map<String, Int>) {
                     Text(label, style = MaterialTheme.typography.labelSmall, modifier = Modifier.width(44.dp), maxLines = 1)
                     Spacer(modifier = Modifier.width(8.dp))
                     Box(
-                        modifier = Modifier.weight(1f).height(18.dp).clip(RoundedCornerShape(6.dp)).background(MaterialTheme.colorScheme.surfaceVariant)
+                        modifier = Modifier.weight(1f).height(18.dp).clip(RoundedCornerShape(6.dp)).background(MaterialTheme.colorScheme.surface)
                     ) {
                         Box(
                             modifier = Modifier.fillMaxWidth(fraction).height(18.dp).clip(RoundedCornerShape(6.dp)).background(colors[label] ?: Color.Gray)
@@ -367,7 +381,13 @@ private fun EmotionPieChart(distribution: Map<String, Int>) {
     val total = distribution.values.sum().toFloat().coerceAtLeast(1f)
     val entries = distribution.entries.toList()
 
-    Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp)) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text("Эмоции после рабочего дня", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             Text("На основе ответов опроса", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -405,7 +425,13 @@ private fun EmotionPieChart(distribution: Map<String, Int>) {
 
 @Composable
 private fun PriorityDistributionChart(distribution: Map<Priority, Int>) {
-    Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp)) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text("Количество задач по приоритетам", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(12.dp))
@@ -425,7 +451,7 @@ private fun DistributionRow(label: String, count: Int, total: Int, color: Color)
         Spacer(modifier = Modifier.width(8.dp))
         Text(label, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.width(100.dp))
         Spacer(modifier = Modifier.width(8.dp))
-        Box(modifier = Modifier.weight(1f).height(8.dp).clip(RoundedCornerShape(4.dp)).background(MaterialTheme.colorScheme.surfaceVariant)) {
+        Box(modifier = Modifier.weight(1f).height(8.dp).clip(RoundedCornerShape(4.dp)).background(MaterialTheme.colorScheme.surface)) {
             Box(modifier = Modifier.fillMaxWidth(fraction).height(8.dp).clip(RoundedCornerShape(4.dp)).background(color))
         }
         Spacer(modifier = Modifier.width(8.dp))
@@ -435,7 +461,13 @@ private fun DistributionRow(label: String, count: Int, total: Int, color: Color)
 
 @Composable
 private fun TopListCard(title: String, items: List<Pair<String, Int>>, color: Color) {
-    Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp)) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             Text("На основе ответов опроса", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
