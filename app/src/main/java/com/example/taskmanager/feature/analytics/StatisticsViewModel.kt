@@ -20,10 +20,8 @@ data class WellbeingEntry(
     val score: Float
 )
 
-// ИЗМЕНЕНО: добавлены новые поля для всех категорий статистики
 data class StatisticsUiState(
     val isLoading: Boolean = true,
-    // Задачи
     val totalTasks: Int = 0,
     val completedTasks: Int = 0,
     val activeTasks: Int = 0,
@@ -32,20 +30,14 @@ data class StatisticsUiState(
     val distributionByPriority: Map<Priority, Int> = emptyMap(),
     val productivityByDay: List<Pair<String, Int>> = emptyList(),
     val averageCompletionTime: Float? = null,
-    // Опросы — WELLBEING
     val wellbeingByDay: List<WellbeingEntry> = emptyList(),
     val stressByDay: List<WellbeingEntry> = emptyList(),
-    // Опросы — PRODUCTIVITY
     val productivityScoreByDay: List<WellbeingEntry> = emptyList(),
     val productivityTimeOfDay: Map<String, Int> = emptyMap(),
-    // Опросы — TASK_COMPLETION
     val topFailureReasons: List<Pair<String, Int>> = emptyList(),
-    // Опросы — CONCENTRATION
-    val concentrationByDay: List<WellbeingEntry> = emptyList(),
+    // УДАЛЕНО: concentrationByDay
     val topDistractions: List<Pair<String, Int>> = emptyList(),
-    // Опросы — TOOLS
     val topTools: List<Pair<String, Int>> = emptyList(),
-    // Опросы — MOTIVATION
     val emotionDistribution: Map<String, Int> = emptyMap(),
     val topMotivations: List<Pair<String, Int>> = emptyList(),
     val hasSurveyData: Boolean = false
@@ -84,7 +76,6 @@ class StatisticsViewModel @Inject constructor(
             val today = LocalDate.now()
             val weekAgo = today.minusDays(6)
 
-            // ===== WELLBEING =====
             val wellbeingScoreMap = mapOf(
                 "Энергично" to 4f, "Нормально" to 3f,
                 "Устал" to 2f, "Очень устал" to 1f
@@ -101,7 +92,6 @@ class StatisticsViewModel @Inject constructor(
                 "Как бы вы оценили свой уровень стресса сегодня?", weekAgo, today
             ).map { WellbeingEntry(it.date.format(formatter), stressScoreMap[it.answer] ?: 2f) }
 
-            // ===== PRODUCTIVITY =====
             val productivityScoreMap = mapOf(
                 "Отлично" to 4f, "Хорошо" to 3f,
                 "Удовлетворительно" to 2f, "Плохо" to 1f
@@ -110,17 +100,15 @@ class StatisticsViewModel @Inject constructor(
                 "Как вы оцениваете свою продуктивность сегодня?", weekAgo, today
             ).map { WellbeingEntry(it.date.format(formatter), productivityScoreMap[it.answer] ?: 2f) }
 
-            // НОВОЕ: распределение по времени суток
             val timeOfDayResults = surveyDao.getResultsByQuestion(
                 "В какое время дня вы были наиболее продуктивны сегодня?", weekAgo, today
             )
             val productivityTimeOfDay = mapOf(
-                "Утром" to timeOfDayResults.count { it.answer == "Утром" },
-                "Днём" to timeOfDayResults.count { it.answer == "Днём" },
-                "Вечером" to timeOfDayResults.count { it.answer == "Вечером" }
+                "Утро" to timeOfDayResults.count { it.answer == "Утром" },
+                "День" to timeOfDayResults.count { it.answer == "Днём" },
+                "Вечер" to timeOfDayResults.count { it.answer == "Вечером" }
             )
 
-            // ===== TASK_COMPLETION =====
             val topFailureReasons = surveyDao.getResultsByQuestion(
                 "Что чаще всего мешало вам выполнять задачи сегодня?", weekAgo, today
             ).filter { it.answer != "Ничего не мешало" }
@@ -129,15 +117,6 @@ class StatisticsViewModel @Inject constructor(
                 .sortedByDescending { it.second }
                 .take(5)
 
-            // ===== CONCENTRATION =====
-            val concentrationScoreMap = mapOf(
-                "Совсем нет" to 5f, "Редко" to 4f,
-                "Иногда" to 3f, "Часто" to 2f, "Постоянно" to 1f
-            )
-            val concentrationByDay = surveyDao.getResultsByQuestion(
-                "Часто ли вы отвлекались во время работы сегодня?", weekAgo, today
-            ).map { WellbeingEntry(it.date.format(formatter), concentrationScoreMap[it.answer] ?: 3f) }
-
             val topDistractions = surveyDao.getResultsByQuestion(
                 "Что чаще всего отвлекало вас сегодня?", weekAgo, today
             ).groupBy { it.answer }
@@ -145,7 +124,6 @@ class StatisticsViewModel @Inject constructor(
                 .sortedByDescending { it.second }
                 .take(5)
 
-            // ===== TOOLS =====
             val topTools = surveyDao.getResultsByQuestion(
                 "Какие инструменты вы использовали для выполнения задач сегодня?", weekAgo, today
             ).filter { it.answer != "Не использовал доп. инструменты" }
@@ -154,8 +132,6 @@ class StatisticsViewModel @Inject constructor(
                 .sortedByDescending { it.second }
                 .take(5)
 
-            // ===== MOTIVATION =====
-            // НОВОЕ: распределение эмоций для круговой диаграммы
             val emotionDistribution = surveyDao.getResultsByQuestion(
                 "Какие эмоции у вас остались после рабочего дня?", weekAgo, today
             ).groupBy { it.answer }
@@ -171,8 +147,7 @@ class StatisticsViewModel @Inject constructor(
                 .sortedByDescending { it.second }
                 .take(5)
 
-            val totalSurveyCount = surveyDao.getResultsInPeriod(weekAgo, today).size
-            val hasSurveyData = totalSurveyCount > 0
+            val hasSurveyData = surveyDao.getResultsInPeriod(weekAgo, today).isNotEmpty()
 
             _uiState.value = StatisticsUiState(
                 isLoading = false,
@@ -189,7 +164,6 @@ class StatisticsViewModel @Inject constructor(
                 productivityScoreByDay = productivityScoreByDay,
                 productivityTimeOfDay = productivityTimeOfDay,
                 topFailureReasons = topFailureReasons,
-                concentrationByDay = concentrationByDay,
                 topDistractions = topDistractions,
                 topTools = topTools,
                 emotionDistribution = emotionDistribution,

@@ -46,7 +46,7 @@ interface SurveyDao {
     @Query("SELECT COUNT(*) FROM survey_results WHERE date = :date")
     suspend fun countForDate(date: LocalDate): Int
 
-    // НОВОЕ: удаление всех ответов за конкретный день
+    // Удаление всех ответов за конкретный день
     @Query("DELETE FROM survey_results WHERE date = :date")
     suspend fun deleteForDate(date: LocalDate)
 }

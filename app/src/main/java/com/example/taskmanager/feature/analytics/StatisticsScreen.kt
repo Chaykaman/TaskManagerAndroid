@@ -21,12 +21,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -35,9 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -48,9 +46,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.taskmanager.data.local.entity.Priority
-import com.example.taskmanager.feature.common.ScreenScaffold
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatisticsScreen(
     onBack: () -> Unit,
@@ -58,7 +55,7 @@ fun StatisticsScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
 
-    ScreenScaffold(
+    Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Статистика") },
@@ -72,38 +69,27 @@ fun StatisticsScreen(
     ) { padding ->
         if (state.isLoading) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                LoadingIndicator()
+                CircularProgressIndicator()
             }
         } else {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(horizontal = 16.dp)
+                    .padding(16.dp)
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // ===== БЛОК 1: Общая статистика задач =====
                 SummaryCards(state = state)
-
-                // ===== БЛОК 2: Выполненные задачи по дням =====
-                // ProductivityChart(productivityByDay = state.productivityByDay) //
-
-                // ===== БЛОК 3: По приоритетам =====
                 PriorityDistributionChart(distribution = state.distributionByPriority)
 
-                // ===== БЛОК 4: Среднее время =====
-                // state.averageCompletionTime?.let { AverageTimeCard(hours = it) }
-
-                // ===== БЛОКИ ИЗ ОПРОСОВ =====
                 if (state.hasSurveyData) {
                     Text(
-                        text = "Аналитика опросов (за последние 7 дней)",
+                        text = "Аналитика опросов за последнее время",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
 
-                    // PRODUCTIVITY — оценка продуктивности по дням
                     if (state.productivityScoreByDay.isNotEmpty()) {
                         LineChartCard(
                             title = "Оценка продуктивности по дням",
@@ -114,12 +100,10 @@ fun StatisticsScreen(
                         )
                     }
 
-                    // PRODUCTIVITY — время суток
                     if (state.productivityTimeOfDay.values.any { it > 0 }) {
                         TimeOfDayChart(timeOfDay = state.productivityTimeOfDay)
                     }
 
-                    // WELLBEING — самочувствие
                     if (state.wellbeingByDay.isNotEmpty()) {
                         LineChartCard(
                             title = "Самочувствие по дням",
@@ -130,7 +114,6 @@ fun StatisticsScreen(
                         )
                     }
 
-                    // WELLBEING — стресс
                     if (state.stressByDay.isNotEmpty()) {
                         LineChartCard(
                             title = "Уровень стресса по дням",
@@ -141,12 +124,10 @@ fun StatisticsScreen(
                         )
                     }
 
-                    // MOTIVATION — эмоции (круговая диаграмма)
                     if (state.emotionDistribution.isNotEmpty()) {
                         EmotionPieChart(distribution = state.emotionDistribution)
                     }
 
-                    // MOTIVATION — топ мотивации
                     if (state.topMotivations.isNotEmpty()) {
                         TopListCard(
                             title = "Главные источники мотивации",
@@ -160,7 +141,6 @@ fun StatisticsScreen(
                         )
                     }
 
-                    // TASK_COMPLETION — причины невыполнения
                     if (state.topFailureReasons.isNotEmpty()) {
                         TopListCard(
                             title = "Что мешает выполнять задачи",
@@ -174,7 +154,6 @@ fun StatisticsScreen(
                         )
                     }
 
-                    // CONCENTRATION — источники отвлечений
                     if (state.topDistractions.isNotEmpty()) {
                         TopListCard(
                             title = "Главные источники отвлечений",
@@ -188,7 +167,6 @@ fun StatisticsScreen(
                         )
                     }
 
-                    // TOOLS — инструменты
                     if (state.topTools.isNotEmpty()) {
                         TopListCard(
                             title = "Часто используемые инструменты",
@@ -211,8 +189,6 @@ fun StatisticsScreen(
         }
     }
 }
-
-// ===== ОБЩАЯ СТАТИСТИКА =====
 
 @Composable
 private fun SummaryCards(state: StatisticsUiState) {
@@ -267,70 +243,6 @@ private fun StatCard(modifier: Modifier, title: String, value: String, color: Co
     }
 }
 
-// ===== СТОЛБЧАТЫЙ ГРАФИК (выполненные задачи по дням) =====
-
-// ИЗМЕНЕНО: добавлена ось Y с количеством задач
-@Composable
-private fun ProductivityChart(productivityByDay: List<Pair<String, Int>>) {
-    Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp)) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text("Выполнено задач за 7 дней", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(16.dp))
-            if (productivityByDay.isEmpty() || productivityByDay.all { it.second == 0 }) {
-                EmptyChartBox()
-            } else {
-                val maxValue = productivityByDay.maxOf { it.second }.coerceAtLeast(1)
-                val barColor = MaterialTheme.colorScheme.primary
-
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    // Ось Y
-                    Column(
-                        modifier = Modifier.height(120.dp).width(24.dp),
-                        verticalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        listOf(maxValue, maxValue / 2, 0).forEach { value ->
-                            Text(
-                                text = value.toString(),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                textAlign = TextAlign.End,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Canvas(modifier = Modifier.weight(1f).height(120.dp)) {
-                        drawBarChart(productivityByDay, maxValue, barColor)
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(start = 28.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    productivityByDay.forEach { (date, _) ->
-                        Text(date, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    }
-                }
-            }
-        }
-    }
-}
-
-private fun DrawScope.drawBarChart(data: List<Pair<String, Int>>, maxValue: Int, color: Color) {
-    val barCount = data.size
-    val spacing = size.width * 0.05f / (barCount + 1)
-    val barWidth = (size.width - spacing * (barCount + 1)) / barCount
-    data.forEachIndexed { index, (_, value) ->
-        val barHeight = (value.toFloat() / maxValue) * size.height
-        val left = spacing + index * (barWidth + spacing)
-        drawRoundRect(color = color, topLeft = Offset(left, size.height - barHeight), size = Size(barWidth, barHeight), cornerRadius = CornerRadius(8f, 8f))
-    }
-}
-
-// ===== ЛИНЕЙНЫЙ ГРАФИК =====
-
 @Composable
 private fun LineChartCard(
     title: String,
@@ -340,13 +252,7 @@ private fun LineChartCard(
     maxValue: Float,
     labels: List<String>
 ) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-    ) {
+    Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp)) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             Text("На основе ответов опроса", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -367,20 +273,11 @@ private fun LineChartCard(
             }
             Spacer(modifier = Modifier.height(8.dp))
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 88.dp),
-                horizontalArrangement = if (entries.size == 1)
-                    Arrangement.Center
-                else
-                    Arrangement.SpaceBetween
+                modifier = Modifier.fillMaxWidth().padding(start = 88.dp),
+                horizontalArrangement = if (entries.size == 1) Arrangement.Center else Arrangement.SpaceBetween
             ) {
                 entries.forEach { entry ->
-                    Text(
-                        entry.date,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    Text(entry.date, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         }
@@ -396,7 +293,6 @@ private fun DrawScope.drawLineChart(
     if (entries.isEmpty()) return
     val range = maxValue - minValue
 
-    // если одна точка — рисуем просто точку по центру
     if (entries.size == 1) {
         val x = size.width / 2f
         val y = size.height - ((entries[0].score - minValue) / range) * size.height
@@ -424,64 +320,33 @@ private fun DrawScope.drawLineChart(
     }
 }
 
-// ===== ВРЕМЯ СУТОК (горизонтальная диаграмма) =====
-
 @Composable
 private fun TimeOfDayChart(timeOfDay: Map<String, Int>) {
     val total = timeOfDay.values.sum().coerceAtLeast(1)
     val colors = mapOf(
-        "Утром" to Color(0xFFFF9800),
-        "Днём" to Color(0xFF2196F3),
-        "Вечером" to Color(0xFF9C27B0)
+        "Утро" to Color(0xFFFF9800),
+        "День" to Color(0xFF2196F3),
+        "Вечер" to Color(0xFF9C27B0)
     )
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-    ) {
+    Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp)) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                "Когда вы наиболее продуктивны",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                "На основе ответов опроса",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            Text("Когда вы наиболее продуктивны", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            Text("На основе ответов опроса", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(modifier = Modifier.height(16.dp))
-            listOf("Утром", "Днем", "Вечером").forEach { label ->
+            listOf("Утро", "День", "Вечер").forEach { label ->
                 val count = timeOfDay[label] ?: 0
                 val fraction = count.toFloat() / total
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // уменьшена ширина подписи и размер шрифта
-                    Text(
-                        label,
-                        style = MaterialTheme.typography.labelSmall,
-                        modifier = Modifier.width(44.dp),
-                        maxLines = 1
-                    )
+                    Text(label, style = MaterialTheme.typography.labelSmall, modifier = Modifier.width(44.dp), maxLines = 1)
                     Spacer(modifier = Modifier.width(8.dp))
-                    // ИЗМЕНЕНО: уменьшена высота столбика с 24 до 18
                     Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(18.dp)
-                            .clip(RoundedCornerShape(6.dp))
-                            .background(MaterialTheme.colorScheme.surface)
+                        modifier = Modifier.weight(1f).height(18.dp).clip(RoundedCornerShape(6.dp)).background(MaterialTheme.colorScheme.surfaceVariant)
                     ) {
                         Box(
-                            modifier = Modifier
-                                .fillMaxWidth(fraction)
-                                .height(18.dp)
-                                .clip(RoundedCornerShape(6.dp))
-                                .background(colors[label] ?: Color.Gray)
+                            modifier = Modifier.fillMaxWidth(fraction).height(18.dp).clip(RoundedCornerShape(6.dp)).background(colors[label] ?: Color.Gray)
                         )
                     }
                 }
@@ -489,8 +354,6 @@ private fun TimeOfDayChart(timeOfDay: Map<String, Int>) {
         }
     }
 }
-
-// ===== КРУГОВАЯ ДИАГРАММА ЭМОЦИЙ =====
 
 @Composable
 private fun EmotionPieChart(distribution: Map<String, Int>) {
@@ -504,22 +367,12 @@ private fun EmotionPieChart(distribution: Map<String, Int>) {
     val total = distribution.values.sum().toFloat().coerceAtLeast(1f)
     val entries = distribution.entries.toList()
 
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-    ) {
+    Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp)) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text("Эмоции после рабочего дня", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             Text("На основе ответов опроса", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Круговая диаграмма
+            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Canvas(modifier = Modifier.size(120.dp)) {
                     var startAngle = -90f
                     entries.forEach { (emotion, count) ->
@@ -530,25 +383,18 @@ private fun EmotionPieChart(distribution: Map<String, Int>) {
                             sweepAngle = sweep,
                             useCenter = true,
                             topLeft = Offset(0f, 0f),
-                            size = Size(size.width, size.height)
+                            size = androidx.compose.ui.geometry.Size(size.width, size.height)
                         )
                         startAngle += sweep
                     }
                 }
                 Spacer(modifier = Modifier.width(16.dp))
-                // Легенда
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     entries.forEach { (emotion, count) ->
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(
-                                modifier = Modifier.size(10.dp).clip(CircleShape).background(emotionColors[emotion] ?: Color.Gray)
-                            )
+                            Box(modifier = Modifier.size(10.dp).clip(CircleShape).background(emotionColors[emotion] ?: Color.Gray))
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = "$emotion ($count)",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
+                            Text("$emotion ($count)", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurface)
                         }
                     }
                 }
@@ -557,20 +403,11 @@ private fun EmotionPieChart(distribution: Map<String, Int>) {
     }
 }
 
-
-// ===== РАСПРЕДЕЛЕНИЕ ПО ПРИОРИТЕТАМ =====
-
 @Composable
 private fun PriorityDistributionChart(distribution: Map<Priority, Int>) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-    ) {
+    Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp)) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("По приоритетам", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            Text("Количество задач по приоритетам", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(12.dp))
             distribution.entries.forEach { (priority, count) ->
                 DistributionRow(label = priority.label, count = count, total = distribution.values.sum(), color = priority.color)
@@ -588,7 +425,7 @@ private fun DistributionRow(label: String, count: Int, total: Int, color: Color)
         Spacer(modifier = Modifier.width(8.dp))
         Text(label, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.width(100.dp))
         Spacer(modifier = Modifier.width(8.dp))
-        Box(modifier = Modifier.weight(1f).height(8.dp).clip(RoundedCornerShape(4.dp)).background(MaterialTheme.colorScheme.surface)) {
+        Box(modifier = Modifier.weight(1f).height(8.dp).clip(RoundedCornerShape(4.dp)).background(MaterialTheme.colorScheme.surfaceVariant)) {
             Box(modifier = Modifier.fillMaxWidth(fraction).height(8.dp).clip(RoundedCornerShape(4.dp)).background(color))
         }
         Spacer(modifier = Modifier.width(8.dp))
@@ -596,36 +433,9 @@ private fun DistributionRow(label: String, count: Int, total: Int, color: Color)
     }
 }
 
-// ===== СРЕДНЕЕ ВРЕМЯ =====
-
-@Composable
-private fun AverageTimeCard(hours: Float) {
-    Card(
-        modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text("Среднее время выполнения", style = MaterialTheme.typography.bodyLarge)
-            Text("${"%.1f".format(hours)} ч", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary)
-        }
-    }
-}
-
-// ===== ТОП СПИСОК =====
-
 @Composable
 private fun TopListCard(title: String, items: List<Pair<String, Int>>, color: Color) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-    ) {
+    Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp)) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             Text("На основе ответов опроса", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -651,8 +461,6 @@ private fun TopListCard(title: String, items: List<Pair<String, Int>>, color: Co
     }
 }
 
-// ===== НЕТ ДАННЫХ ОПРОСА =====
-
 @Composable
 private fun NoSurveyDataCard() {
     Card(
@@ -677,41 +485,14 @@ private fun NoSurveyDataCard() {
     }
 }
 
-// ===== ПУСТОЙ ГРАФИК =====
-
-@Composable
-private fun EmptyChartBox() {
-    Box(modifier = Modifier.fillMaxWidth().height(120.dp), contentAlignment = Alignment.Center) {
-        Text("Нет данных за этот период", color = MaterialTheme.colorScheme.onSurfaceVariant)
-    }
-}
-
-// блок с позитивным сообщением когда топ пустой
 @Composable
 private fun EmptySurveyBlock(title: String, message: String) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp)
-    ) {
+    Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp)) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                title,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                "На основе ответов опроса",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            Text("На основе ответов опроса", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(modifier = Modifier.height(12.dp))
-            Text(
-                text = message,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
+            Text(text = message, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
         }
     }
 }
