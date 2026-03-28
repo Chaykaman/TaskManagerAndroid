@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Assessment
 import androidx.compose.material.icons.filled.Quiz
+import androidx.compose.material.icons.rounded.EmojiEvents
+import androidx.compose.material.icons.rounded.LocalFireDepartment
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -15,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.taskmanager.feature.common.ScreenScaffold
 import com.example.taskmanager.feature.menu.components.MenuHeader
+import com.example.taskmanager.feature.menu.components.MenuRowButton
+import com.example.taskmanager.feature.menu.components.MenuSectionHeader
 import com.example.taskmanager.feature.taskdetail.components.IconField
 import com.example.taskmanager.feature.taskdetail.components.RowField
 
@@ -22,6 +26,8 @@ import com.example.taskmanager.feature.taskdetail.components.RowField
 fun MenuScreen(
     onSurveyClick: () -> Unit,
     onStatisticsClick: () -> Unit,
+    onProductivityClick: () -> Unit,
+    onAchievementsClick: () -> Unit,
     onAppSettingsClick: () -> Unit,
 ) {
     ScreenScaffold(
@@ -37,11 +43,7 @@ fun MenuScreen(
                 .fillMaxSize()
                 .padding(padding),
         ) {
-            Text(
-                text = "Аналитика",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-            )
+            MenuSectionHeader(title = "Аналитика")
 
             RowField(modifier = Modifier.clickable(onClick = onSurveyClick)) {
                 IconField(
@@ -64,6 +66,22 @@ fun MenuScreen(
                     style = MaterialTheme.typography.bodyLarge
                 )
             }
+
+            HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+
+            MenuSectionHeader(title = "Продуктивность")
+
+            MenuRowButton(
+                onClick = onProductivityClick,
+                icon = Icons.Rounded.LocalFireDepartment,
+                text = "Продуктивность"
+            )
+
+            MenuRowButton(
+                onClick = onAchievementsClick,
+                icon = Icons.Rounded.EmojiEvents,
+                text = "Достижения"
+            )
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
         }

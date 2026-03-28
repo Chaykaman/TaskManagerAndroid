@@ -1,44 +1,41 @@
 package com.example.taskmanager.data.repository
 
-import com.example.taskmanager.data.local.entity.Habit
-import com.example.taskmanager.data.local.entity.HabitLog
+import com.example.taskmanager.data.local.entity.habit.DayCompletionCount
+import com.example.taskmanager.data.local.entity.habit.Habit
+import com.example.taskmanager.data.local.entity.habit.HabitCompletionCount
+import com.example.taskmanager.data.local.entity.habit.HabitLog
+import com.example.taskmanager.data.local.entity.habit.HabitStatEntry
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
 interface HabitRepository {
-
-    // ============================ Habit ============================
-
-    //Нужен ли Enum ??????????? Нужна ли вообще сортировка ??????
-    fun getAllHabits(): Flow<List<Habit>>
-
+    // Привычки
+    fun getActiveHabits(): Flow<List<Habit>>
+    fun getHabitsForToday(): Flow<List<Habit>>
+    fun getArchivedHabits(): Flow<List<Habit>>
     suspend fun getHabitById(id: Int): Habit?
     suspend fun addHabit(habit: Habit)
     suspend fun updateHabit(habit: Habit)
+    suspend fun archiveHabit(id: Int)
     suspend fun deleteHabit(habit: Habit)
 
-    // ============================ HabitLog ============================
-    suspend fun toggleHabit(habitId: Int, date: LocalDate)
-    suspend fun isCompletedOnDate(habitId: Int, date: LocalDate): Boolean
+    // Отметка выполнения
+    suspend fun toggleHabitCompletion(habitId: Int, date: LocalDate)
+    fun isCompletedOnDate(habitId: Int, date: LocalDate): Flow<Boolean>
+    fun getLogsBetween(habitId: Int, start: LocalDate, end: LocalDate): Flow<List<HabitLog>>
 
-    suspend fun getLogsBetween(
-        habitId: Int,
-        startDate: LocalDate,
-        endDate: LocalDate
-    ): List<HabitLog>
-
-    // ============================  Подсчёт  ============================
-    suspend fun getCompletedCount(habitId: Int): Int
-
-    suspend fun getCompletedCountBetween(
-        habitId: Int,
-        startDate: LocalDate,
-        endDate: LocalDate
-    ): Int
-
+    // Статистика
+    suspend fun getTotalCompletedCount(habitId: Int): Int
     suspend fun getCompletionRate(habitId: Int): Double
-
-    suspend fun getLastCompletedDate(habitId: Int): LocalDate?
-
-    suspend fun getStreak(habitId: Int): Int
+    suspend fun getTopHabits(start: LocalDate, end: LocalDate, limit: Int = 5): List<HabitCompletionCount>
+    fun getCompletedDates(habitId: Int): Flow<List<LocalDate>>
+    fun getLogsForDate(date: LocalDate): Flow<List<HabitLog>>
+    suspend fun getCompletionsPerDay(
+        startDate: LocalDate,
+        endDate: LocalDate
+    ): List<DayCompletionCount>
+    suspend fun getHabitStatsForPeriod(
+        startDate: LocalDate,
+        endDate: LocalDate
+    ): List<HabitStatEntry>
 }

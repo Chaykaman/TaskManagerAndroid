@@ -1,30 +1,35 @@
 package com.example.taskmanager.data.local.database
 
 import androidx.room.TypeConverter
-import com.example.taskmanager.data.local.entity.DayOfTheWeek
 import com.example.taskmanager.data.local.entity.Priority
 import com.example.taskmanager.data.local.entity.Status
+import com.example.taskmanager.data.local.entity.habit.HabitFrequency
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
 class Converters {
+
     @TypeConverter
-    fun fromDayOfWeekList(list: List<DayOfTheWeek>?): String? {
-        return list?.joinToString(",") { it.id.toString() }
+    fun fromDayOfWeekList(days: List<DayOfWeek>): String {
+        return days.joinToString(",") { it.name }
     }
 
     @TypeConverter
-    fun toDayOfWeekList(value: String?): List<DayOfTheWeek>? {
-        return value?.split(",")?.map { id ->
-            DayOfTheWeek.entries.first { it.id == id.toInt() }
+    fun toDayOfWeekList(value: String): List<DayOfWeek> {
+        if (value.isBlank()) return emptyList()
+        return value.split(",").mapNotNull {
+            runCatching { DayOfWeek.valueOf(it) }.getOrNull()
         }
     }
-    @TypeConverter
-    fun fromDayOfTheWeek(dayOfTheWeek: DayOfTheWeek): Int = dayOfTheWeek.id
 
     @TypeConverter
-    fun toDayOfTheWeek(value: Int): DayOfTheWeek = DayOfTheWeek.entries.first{it.id == value}
+    fun fromHabitFrequency(frequency: HabitFrequency): String = frequency.name
+
+    @TypeConverter
+    fun toHabitFrequency(value: String): HabitFrequency =
+        runCatching { HabitFrequency.valueOf(value) }.getOrDefault(HabitFrequency.DAILY)
 
     @TypeConverter
     fun fromStatus(status: Status): Int = status.id

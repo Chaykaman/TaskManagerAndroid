@@ -24,7 +24,9 @@ data class Task(
     // Статусы и приоритеты
     var status: Status = Status.TODO,
     var priority: Priority = Priority.PRIORITY_4,
+
     var isCompleted: Boolean = false,
+    val completedAt: LocalDate? = null,
 
     // Настройки
     var notificationEnabled: Boolean = false,

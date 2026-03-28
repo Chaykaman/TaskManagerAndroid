@@ -4,6 +4,8 @@ import com.example.taskmanager.data.repository.AppSettingsRepository
 import com.example.taskmanager.data.repository.AppSettingsRepositoryImpl
 import com.example.taskmanager.data.repository.DisplayOptionsRepository
 import com.example.taskmanager.data.repository.DisplayOptionsRepositoryImpl
+import com.example.taskmanager.data.repository.HabitRepository
+import com.example.taskmanager.data.repository.HabitRepositoryImpl
 import com.example.taskmanager.data.repository.TaskRepository
 import com.example.taskmanager.data.repository.TaskRepositoryImpl
 import dagger.Binds
@@ -33,4 +35,11 @@ abstract class TaskRepositoryModule {
     abstract fun bindAppSettingsRepository(
         impl: AppSettingsRepositoryImpl
     ): AppSettingsRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindHabitRepository(
+        impl: HabitRepositoryImpl
+    ): HabitRepository
+
 }

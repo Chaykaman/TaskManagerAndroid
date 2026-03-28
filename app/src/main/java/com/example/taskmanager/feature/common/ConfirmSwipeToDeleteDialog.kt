@@ -1,4 +1,4 @@
-package com.example.taskmanager.feature.tasklist.components
+package com.example.taskmanager.feature.common
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
@@ -7,13 +7,15 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun ConfirmSwipeToDeleteDialog(
+    title: String,
+    description: String,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
 ) {
     AlertDialog(
-        title = { Text(text = "Удалить задачу?") },
+        title = { Text(text = title) },
         text = {
-            Text(text = "Задача будет удалена навсегда без возможности восстановления.")
+            Text(text = description)
         },
         onDismissRequest = { onDismiss },
         confirmButton = {

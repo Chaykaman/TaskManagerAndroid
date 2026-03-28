@@ -32,14 +32,26 @@ fun Main() {
             onTaskClick = { taskId -> navigator.navigate(Route.TaskDetail(taskId)) },
             onAddTaskClick = { date -> navigator.navigate(Route.TaskCreate(date)) },
         )
+        featureHabitsSection(
+            onHabitFormClick = { navigator.navigate(Route.HabitForm(null)) },
+            onMyHabitListClick = { navigator.navigate(Route.MyHabitList) },
+            onHabitStatsClick = { navigator.navigate(Route.HabitStats) },
+            onHabitClick = { habitId -> navigator.navigate(Route.HabitForm(habitId)) },
+            onBack = { navigator.goBack() }
+        )
         featureMenuSection(
             onSurveyClick = { navigator.navigate(Route.DailySurvey) },
             onStatisticsClick = { navigator.navigate(Route.Statistics) },
+            onProductivityClick = { navigator.navigate(Route.Streak) },
+            onAchievementsClick = { navigator.navigate(Route.Achievements) },
             onAppSettingsClick = { navigator.navigate(Route.Settings) }
         )
         featureAnalyticsSection(
             onBack = { navigator.goBack() },
             onNavigateToStatistics = { navigator.navigate(Route.Statistics) }
+        )
+        featureProductivitySection(
+            onBack = { navigator.goBack() }
         )
     }
 

@@ -4,6 +4,9 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Sort
+import androidx.compose.material.icons.outlined.ViewStream
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.runtime.Composable
@@ -18,9 +21,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.taskmanager.feature.common.ScreenScaffold
 import com.example.taskmanager.feature.common.toFabPosition
 import com.example.taskmanager.feature.tasklist.components.FloatingAddButton
-import com.example.taskmanager.feature.tasklist.components.TaskListTopAppBar
 import com.example.taskmanager.feature.tasksdisplay.TasksDisplayScreen
 import com.example.taskmanager.feature.common.LocalFabAlignment
+import com.example.taskmanager.feature.common.topappbar.ScreenTopAppBar
+import com.example.taskmanager.feature.common.topappbar.TopAppAction
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -38,9 +42,20 @@ fun TaskListScreen(
 
     ScreenScaffold(
         topBar = {
-            TaskListTopAppBar(
-                onGroupingClick = { showGroupingDisplay = true },
-                onSortingClick = { showSortingDisplay = true }
+            ScreenTopAppBar(
+                title = "Задачи",
+                actions = listOf(
+                    TopAppAction(
+                        icon = Icons.Outlined.ViewStream,
+                        contentDescription = "Группировка",
+                        onClick = { showGroupingDisplay = true }
+                    ),
+                    TopAppAction(
+                        icon = Icons.AutoMirrored.Rounded.Sort,
+                        contentDescription = "Сортировка",
+                        onClick = { showSortingDisplay = true }
+                    )
+                )
             )
         },
         floatingActionButton = {
