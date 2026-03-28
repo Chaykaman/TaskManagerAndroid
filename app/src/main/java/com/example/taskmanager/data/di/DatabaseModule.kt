@@ -3,6 +3,7 @@ package com.example.taskmanager.data.di
 import android.content.Context
 import com.example.taskmanager.data.local.database.MainDb
 import com.example.taskmanager.data.local.dao.Dao
+import com.example.taskmanager.data.local.dao.HabitDao
 import com.example.taskmanager.data.local.dao.TaskDao
 import com.example.taskmanager.data.local.dao.SurveyDao
 import dagger.Module
@@ -35,5 +36,10 @@ object DatabaseModule {
     @Provides
     fun provideSurveyDao(database: MainDb): SurveyDao {
         return database.getSurveyDao()
+    }
+
+    @Provides
+    fun provideHabitDao(database: MainDb): HabitDao {
+        return database.getHabitDao()
     }
 }
