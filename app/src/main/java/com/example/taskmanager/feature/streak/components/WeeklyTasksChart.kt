@@ -1,25 +1,26 @@
 package com.example.taskmanager.feature.streak.components
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.graphics.toColorInt
 import com.example.taskmanager.data.local.entity.DayTaskCount
+import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.LimitLine
+import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
 import java.time.DayOfWeek
 import java.time.LocalDate
-import androidx.core.graphics.toColorInt
-import com.github.mikephil.charting.charts.BarChart
-import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -29,9 +30,7 @@ fun WeeklyTasksChart(
     minTasksPerDay: Int,
     modifier: Modifier = Modifier
 ) {
-    val isDarkTheme = isSystemInDarkTheme()
-    val textColor = if (isDarkTheme) android.graphics.Color.WHITE
-    else android.graphics.Color.BLACK
+    val textColor = MaterialTheme.colorScheme.onSurfaceVariant.toArgb()
 
     val today = LocalDate.now()
     val weekStart = today.with(DayOfWeek.MONDAY)

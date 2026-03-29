@@ -1,12 +1,13 @@
 package com.example.taskmanager.feature.habits.habitstats.components
 
 import android.graphics.Color
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.taskmanager.data.local.entity.habit.HabitStatEntry
@@ -22,9 +23,7 @@ fun HabitPieChart(
     habitStats: List<HabitStatEntry>,
     modifier: Modifier = Modifier
 ) {
-    val isDarkTheme = isSystemInDarkTheme()
-    val textColor = if (isDarkTheme) Color.WHITE
-    else Color.BLACK
+    val textColor = MaterialTheme.colorScheme.onSurfaceVariant.toArgb()
 
     // Берём топ-5 для читаемости — больше сегментов делают диаграмму перегруженной
     val topStats = remember(habitStats) {
