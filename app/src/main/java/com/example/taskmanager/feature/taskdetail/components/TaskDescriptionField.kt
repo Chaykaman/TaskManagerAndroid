@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Notes
+import androidx.compose.material.icons.automirrored.rounded.Notes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,7 +19,7 @@ fun TaskDescriptionField(
     onValueChange: (String) -> Unit
 ) {
     RowField {
-        IconField(icon = Icons.AutoMirrored.Default.Notes)
+        IconField(icon = Icons.AutoMirrored.Rounded.Notes)
         BasicTextField(
             value = value,
             onValueChange = onValueChange,

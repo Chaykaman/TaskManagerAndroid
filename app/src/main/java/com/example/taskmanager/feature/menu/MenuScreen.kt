@@ -1,26 +1,24 @@
 package com.example.taskmanager.feature.menu
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Assessment
-import androidx.compose.material.icons.filled.Quiz
+import androidx.compose.material.icons.rounded.Assessment
 import androidx.compose.material.icons.rounded.EmojiEvents
 import androidx.compose.material.icons.rounded.LocalFireDepartment
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.rounded.Notifications
+import androidx.compose.material.icons.rounded.Quiz
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.example.taskmanager.feature.common.ScreenScaffold
-import com.example.taskmanager.feature.menu.components.MenuHeader
+import com.example.taskmanager.feature.common.topappbar.ScreenTopAppBar
+import com.example.taskmanager.feature.common.topappbar.TopAppAction
 import com.example.taskmanager.feature.menu.components.MenuRowButton
-import com.example.taskmanager.feature.menu.components.MenuSectionHeader
-import com.example.taskmanager.feature.taskdetail.components.IconField
-import com.example.taskmanager.feature.taskdetail.components.RowField
+import com.example.taskmanager.feature.menu.components.MenuSection
 
 @Composable
 fun MenuScreen(
@@ -32,58 +30,56 @@ fun MenuScreen(
 ) {
     ScreenScaffold(
         topBar = {
-            MenuHeader(
-                onNotificationsClick = {},
-                onSettingsClick = onAppSettingsClick,
+            ScreenTopAppBar(
+                title = "Обзор",
+                actions = listOf(
+                    TopAppAction(
+                        icon = Icons.Rounded.Notifications,
+                        contentDescription = "Уведомления",
+                        onClick = { }
+                    ),
+                    TopAppAction(
+                        icon = Icons.Rounded.Settings,
+                        contentDescription = "Настройки",
+                        onClick = onAppSettingsClick
+                    ),
+                )
             )
         }
     ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding),
+                .padding(padding)
+                .verticalScroll(rememberScrollState()),
         ) {
-            MenuSectionHeader(title = "Аналитика")
+            MenuSection(title = "Аналитика") {
+                MenuRowButton(
+                    onClick = onSurveyClick,
+                    icon = Icons.Rounded.Quiz,
+                    text = "Опрос дня"
+                )
 
-            RowField(modifier = Modifier.clickable(onClick = onSurveyClick)) {
-                IconField(
-                    icon = Icons.Default.Quiz,
-                    tint = MaterialTheme.colorScheme.primary
-                )
-                Text(
-                    text = "Опрос дня",
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
-
-            RowField(modifier = Modifier.clickable(onClick = onStatisticsClick)) {
-                IconField(
-                    icon = Icons.Default.Assessment,
-                    tint = MaterialTheme.colorScheme.primary
-                )
-                Text(
-                    text = "Статистика",
-                    style = MaterialTheme.typography.bodyLarge
+                MenuRowButton(
+                    onClick = onStatisticsClick,
+                    icon = Icons.Rounded.Assessment,
+                    text = "Статистика"
                 )
             }
 
-            HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+            MenuSection(title = "Продуктивность") {
+                MenuRowButton(
+                    onClick = onProductivityClick,
+                    icon = Icons.Rounded.LocalFireDepartment,
+                    text = "Продуктивность"
+                )
 
-            MenuSectionHeader(title = "Продуктивность")
-
-            MenuRowButton(
-                onClick = onProductivityClick,
-                icon = Icons.Rounded.LocalFireDepartment,
-                text = "Продуктивность"
-            )
-
-            MenuRowButton(
-                onClick = onAchievementsClick,
-                icon = Icons.Rounded.EmojiEvents,
-                text = "Достижения"
-            )
-
-            HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+                MenuRowButton(
+                    onClick = onAchievementsClick,
+                    icon = Icons.Rounded.EmojiEvents,
+                    text = "Достижения"
+                )
+            }
         }
     }
 }

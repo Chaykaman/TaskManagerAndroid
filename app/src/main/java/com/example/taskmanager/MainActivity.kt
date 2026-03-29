@@ -7,17 +7,24 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.zIndex
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.taskmanager.data.local.entity.AppTheme
 import com.example.taskmanager.data.repository.AppSettingsRepository
+import com.example.taskmanager.feature.achievements.notifications.AchievementNotification
+import com.example.taskmanager.feature.achievements.notifications.AchievementNotificationViewModel
 import com.example.taskmanager.feature.appsettings.AppSettingsViewModel
 import com.example.taskmanager.feature.common.LocalFabAlignment
 import com.example.taskmanager.navigation.Main
@@ -47,6 +54,8 @@ class MainActivity : ComponentActivity() {
         }
 
         val viewModel: AppSettingsViewModel by viewModels()
+        val achievementNotificationViewModel: AchievementNotificationViewModel by viewModels()
+
         splashScreen.setKeepOnScreenCondition {
             viewModel.uiState.value.isLoading
         }
@@ -61,6 +70,9 @@ class MainActivity : ComponentActivity() {
                 AppTheme.SYSTEM -> isSystemInDarkTheme()
             }
 
+            val pendingAchievements by achievementNotificationViewModel
+                .pendingAchievements.collectAsStateWithLifecycle()
+
             TaskManagerTheme(darkTheme = darkTheme) {
                 val windowInsetsController = WindowCompat
                     .getInsetsController(window, window.decorView)
@@ -70,16 +82,35 @@ class MainActivity : ComponentActivity() {
                     windowInsetsController.isAppearanceLightNavigationBars = !darkTheme
                 }
 
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    content = {
-                        CompositionLocalProvider(
-                            LocalFabAlignment provides settingsUiState.fabAlignment
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Scaffold(
+                        modifier = Modifier.fillMaxSize(),
+                        content = {
+                            CompositionLocalProvider(
+                                LocalFabAlignment provides settingsUiState.fabAlignment
+                            ) {
+                                Main()
+                            }
+                        }
+                    )
+
+                    pendingAchievements.firstOrNull()?.let { achievement ->
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .statusBarsPadding()
+                                .align(Alignment.TopCenter)
+                                .zIndex(Float.MAX_VALUE)
                         ) {
-                            Main()
+                            AchievementNotification(
+                                achievement = achievement,
+                                onDismiss = {
+                                    achievementNotificationViewModel.onAchievementShown()
+                                }
+                            )
                         }
                     }
-                )
+                }
             }
         }
     }

@@ -1,7 +1,7 @@
 package com.example.taskmanager.feature.taskcreate.components
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.automirrored.rounded.Send
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
@@ -26,7 +26,7 @@ fun TaskSendButton(
         shape = MaterialTheme.shapes.small
     ) {
         Icon(
-            imageVector = Icons.AutoMirrored.Filled.Send,
+            imageVector = Icons.AutoMirrored.Rounded.Send,
             contentDescription = "Отправить"
         )
     }

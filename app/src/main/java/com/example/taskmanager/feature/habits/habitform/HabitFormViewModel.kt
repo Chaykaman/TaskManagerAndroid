@@ -5,8 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.taskmanager.data.local.entity.habit.Habit
 import com.example.taskmanager.data.local.entity.habit.HabitFrequency
 import com.example.taskmanager.data.logger.TaskLogger
+import com.example.taskmanager.data.repository.AchievementManager
 import com.example.taskmanager.data.repository.HabitRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,7 +20,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HabitFormViewModel @Inject constructor(
-    private val habitRepository: HabitRepository
+    private val habitRepository: HabitRepository,
+    private val achievementManager: AchievementManager,
+    private val applicationScope: CoroutineScope
 ) : ViewModel() {
 
     init {
@@ -113,7 +117,12 @@ class HabitFormViewModel @Inject constructor(
     fun save() {
         if (!validate()) return
 
-        viewModelScope.launch {
+        // Добавляем привычку и обновляем прогресс выполнения
+        // applicationScope живёт дольше, чем viewModelScope, который уничтожается после закрытия
+        // страницы (из-за этого achievementManager падает с ошибкой). Поэтому всё записываем
+        // в applicationScope, чтобы привычка добавилась, прогресс засчитался и чтобы всё
+        // это происходило последовательно.
+        applicationScope.launch {
             _uiState.update { it.copy(isSaving = true) }
 
             val currentState = _uiState.value
@@ -129,6 +138,9 @@ class HabitFormViewModel @Inject constructor(
                         daysOfWeek = currentState.draftDaysOfWeek.sortedBy { it.value }
                     )
                     habitRepository.addHabit(newHabit)
+
+                    // Обновляем прогресс для достижений
+                    achievementManager.onHabitCreated()
                 }
                 is HabitFormMode.Edit -> {
                     val original = habitRepository.getHabitById(mode.habitId)

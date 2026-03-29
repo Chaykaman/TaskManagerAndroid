@@ -1,7 +1,7 @@
 package com.example.taskmanager.feature.taskcreate.components
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.rounded.CalendarToday
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,7 +29,7 @@ fun TaskCreateDateField(
                 ) ?: "Дата"
             )
         },
-        icon = Icons.Default.CalendarToday,
+        icon = Icons.Rounded.CalendarToday,
         isActive = dueDate != null
     )
 

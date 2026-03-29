@@ -1,21 +1,22 @@
 package com.example.taskmanager.feature.habits.habitstats.components
 
 import android.graphics.Color
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.example.taskmanager.data.local.entity.habit.DayCompletionCount
-import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
 import androidx.core.graphics.toColorInt
+import com.example.taskmanager.data.local.entity.habit.DayCompletionCount
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import java.time.format.TextStyle
 import java.util.Locale
@@ -25,9 +26,7 @@ fun HabitBarChart(
     dailyCompletions: List<DayCompletionCount>,
     modifier: Modifier = Modifier
 ) {
-    val isDarkTheme = isSystemInDarkTheme()
-    val textColor = if (isDarkTheme) Color.WHITE
-    else Color.BLACK
+    val textColor = MaterialTheme.colorScheme.onSurfaceVariant.toArgb()
 
     val barData = remember(dailyCompletions) {
         if (dailyCompletions.isEmpty()) return@remember null
@@ -80,7 +79,7 @@ fun HabitBarChart(
 
                 axisLeft.apply {
                     setDrawGridLines(true)
-                    gridColor = Color.parseColor("#1A000000")
+                    gridColor = "#1A000000".toColorInt()
                     setDrawAxisLine(false)
                     granularity = 1f
                     axisMinimum = 0f

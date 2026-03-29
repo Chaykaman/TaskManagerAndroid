@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Cancel
+import androidx.compose.material.icons.rounded.Cancel
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Icon
@@ -30,7 +30,7 @@ fun TaskCancelDateTime(
             label = { Text(text = text) },
             leadingIcon = {
                 Icon(
-                    imageVector = Icons.Outlined.Cancel,
+                    imageVector = Icons.Rounded.Cancel,
                     contentDescription = "Сбросить",
                     tint = MaterialTheme.colorScheme.error,
                     modifier = Modifier.size(AssistChipDefaults.IconSize)

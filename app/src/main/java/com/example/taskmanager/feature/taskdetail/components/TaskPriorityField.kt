@@ -2,7 +2,7 @@ package com.example.taskmanager.feature.taskdetail.components
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Flag
+import androidx.compose.material.icons.rounded.Flag
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,7 +31,7 @@ fun TaskPriorityField(
     val scope = rememberCoroutineScope()
 
     RowField {
-        IconField(icon = Icons.Default.Flag)
+        IconField(icon = Icons.Rounded.Flag)
 
         AssistChip(
             onClick = { showBottomSheet = true },
@@ -43,7 +43,7 @@ fun TaskPriorityField(
             },
             leadingIcon = {
                 Icon(
-                    imageVector = Icons.Default.Flag,
+                    imageVector = Icons.Rounded.Flag,
                     contentDescription = "Приоритет",
                     tint = priority.color,
                     modifier = Modifier.size(AssistChipDefaults.IconSize)

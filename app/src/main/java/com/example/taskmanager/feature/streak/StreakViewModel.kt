@@ -2,6 +2,7 @@ package com.example.taskmanager.feature.streak
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.taskmanager.data.repository.AchievementManager
 import com.example.taskmanager.data.repository.AppSettingsRepository
 import com.example.taskmanager.data.repository.TaskRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class StreakViewModel @Inject constructor(
     private val taskRepository: TaskRepository,
-    private val settingsRepository: AppSettingsRepository
+    private val settingsRepository: AppSettingsRepository,
+    private val achievementManager: AchievementManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(StreakUiState())
@@ -45,9 +47,6 @@ class StreakViewModel @Inject constructor(
         _uiState.update { it.copy(isLoading = true) }
 
         try {
-            // Данные за всё время для вычисления стриков
-            val allCompletedDates = taskRepository.getAllCompletedDates()
-
             // Данные за последние 365 дней — достаточно для любого реального стрика
             val yearAgo = LocalDate.now().minusDays(364)
             val today = LocalDate.now()
@@ -61,6 +60,9 @@ class StreakViewModel @Inject constructor(
                 minTasksPerDay = minTasks,
                 restDays = restDays
             )
+
+            // Сообщаем AchievementManager о текущем стрике -
+            achievementManager.onStreakUpdated(streakResult.currentStreak)
 
             // Данные для графика — только текущая неделя
             val weekStart = today.with(DayOfWeek.MONDAY)

@@ -4,9 +4,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.AlignHorizontalLeft
-import androidx.compose.material.icons.automirrored.filled.AlignHorizontalRight
-import androidx.compose.material.icons.filled.AlignHorizontalCenter
+import androidx.compose.material.icons.automirrored.rounded.AlignHorizontalLeft
+import androidx.compose.material.icons.automirrored.rounded.AlignHorizontalRight
+import androidx.compose.material.icons.rounded.AlignHorizontalCenter
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -24,21 +24,21 @@ fun FabPositionOptions(
         SettingsOptionCard(
             modifier = Modifier.weight(1f),
             text = "Слева",
-            icon = Icons.AutoMirrored.Default.AlignHorizontalLeft,
+            icon = Icons.AutoMirrored.Rounded.AlignHorizontalLeft,
             isActive = activeFabPosition == FabAlignment.START,
             onThemeClick = { onFabPositionChange(FabAlignment.START) }
         )
         SettingsOptionCard(
             modifier = Modifier.weight(1f),
             text = "Центр",
-            icon = Icons.Default.AlignHorizontalCenter,
+            icon = Icons.Rounded.AlignHorizontalCenter,
             isActive = activeFabPosition == FabAlignment.CENTER,
             onThemeClick = { onFabPositionChange(FabAlignment.CENTER) }
         )
         SettingsOptionCard(
             modifier = Modifier.weight(1f),
             text = "Справа",
-            icon = Icons.AutoMirrored.Default.AlignHorizontalRight,
+            icon = Icons.AutoMirrored.Rounded.AlignHorizontalRight,
             isActive = activeFabPosition == FabAlignment.END,
             onThemeClick = { onFabPositionChange(FabAlignment.END) }
         )

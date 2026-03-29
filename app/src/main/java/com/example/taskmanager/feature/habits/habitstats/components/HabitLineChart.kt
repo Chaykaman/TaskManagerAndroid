@@ -2,12 +2,13 @@ package com.example.taskmanager.feature.habits.habitstats.components
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.taskmanager.data.local.entity.habit.DayCompletionCount
@@ -22,17 +23,14 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.PercentFormatter
 
-
 @Composable
 fun HabitLineChart(
     dailyCompletions: List<DayCompletionCount>,
-    totalHabitsCount: Int, // нужно чтобы вычислить процент за каждый день
+    totalHabitsCount: Int,
     modifier: Modifier = Modifier
 ) {
-    val isDarkTheme = isSystemInDarkTheme()
-    val textColor = if (isDarkTheme) Color.WHITE
-    else Color.BLACK
-    val primaryColor = Color.parseColor("#6650A4")
+    val textColor = MaterialTheme.colorScheme.onSurfaceVariant.toArgb()
+    val primaryColor = "#6650A4".toColorInt()
 
     val lineData = remember(dailyCompletions, totalHabitsCount) {
         if (dailyCompletions.isEmpty() || totalHabitsCount == 0) return@remember null

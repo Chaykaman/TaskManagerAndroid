@@ -1,8 +1,8 @@
 package com.example.taskmanager.feature.taskdetail.components
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccessTimeFilled
-import androidx.compose.material.icons.outlined.AccessTime
+import androidx.compose.material.icons.rounded.AccessTime
+import androidx.compose.material.icons.rounded.AccessTimeFilled
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,7 +20,7 @@ fun TaskTimeField(
     var showTimePicker by remember { mutableStateOf(false) }
 
     RowField {
-        IconField(icon = Icons.Filled.AccessTimeFilled)
+        IconField(icon = Icons.Rounded.AccessTimeFilled)
 
         ChipField(
             onClick = { showTimePicker = true },
@@ -31,7 +31,7 @@ fun TaskTimeField(
                     ) ?: "Выбрать время"
                 )
             },
-            icon = Icons.Outlined.AccessTime,
+            icon = Icons.Rounded.AccessTime,
             isActive = dueTime != null
         )
 
