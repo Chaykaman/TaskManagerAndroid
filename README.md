@@ -98,40 +98,39 @@ Task Manager — это мобильное приложение-планиров
 
 Главное меню
 
-![Menu](imgforReadMe/mainmenu.jpg)
+<img src="imgforReadMe/mainmenu.jpg" width="220"/>
 
 Просмотр задач по календарю
 
-![Calendar](imgforReadMe/calendar.jpg)
+<img src="imgforReadMe/calendar.jpg" width="220"/>
 
 Страница привычек
 
-![Habits](imgforReadMe/habits.jpg)
+<img src="imgforReadMe/habits.jpg" width="220"/>
 
 Обзор
 
-![Review](imgforReadMe/review.jpg)
+<img src="imgforReadMe/review.jpg" width="220"/>
 
 Достижения
 
-![Achievements](imgforReadMe/achievements.jpg)
+<img src="imgforReadMe/achievements.jpg" width="220"/>
 
 Статистика
 
-![Statistics](imgforReadMe/statistics.jpg)
+<img src="imgforReadMe/statistics.jpg" width="220"/>
 
 Серии выполнения
 
-![Streak](imgforReadMe/streak.jpg)
+<img src="imgforReadMe/streak.jpg" width="220"/>
 
 Опрос
 
-![Quiz](imgforReadMe/quiz.jpg)
-
+<img src="imgforReadMe/quiz.jpg" width="220"/>
 
 Тема оформления
 
-![Theme](imgforReadMe/theme.jpg)
+<img src="imgforReadMe/theme.jpg" width="220"/>
 
 
 
