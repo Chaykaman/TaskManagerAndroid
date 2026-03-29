@@ -158,4 +158,18 @@ interface HabitDao {
         startDate: LocalDate,
         endDate: LocalDate
     ): List<HabitStatEntry>
+
+    // Для достижений
+    @Query("""
+    SELECT * FROM habits 
+    WHERE isArchived = 0
+    AND (
+        frequency = 'DAILY' 
+        OR (frequency = 'SPECIFIC_DAYS' AND daysOfWeek LIKE '%' || :dayName || '%')
+    )
+    """)
+    suspend fun getHabitsForDayOnce(dayName: String): List<Habit>
+
+    @Query("SELECT * FROM habit_logs WHERE date = :date")
+    suspend fun getLogsForDateOnce(date: LocalDate): List<HabitLog>
 }

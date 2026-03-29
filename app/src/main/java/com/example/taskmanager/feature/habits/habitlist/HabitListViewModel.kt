@@ -3,8 +3,10 @@ package com.example.taskmanager.feature.habits.habitlist
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.taskmanager.data.logger.TaskLogger
+import com.example.taskmanager.data.repository.AchievementManager
 import com.example.taskmanager.data.repository.HabitRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -20,7 +22,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HabitListViewModel  @Inject constructor(
-    private val habitRepository: HabitRepository
+    private val habitRepository: HabitRepository,
+    private val achievementManager: AchievementManager,
+    private val applicationScope: CoroutineScope
 ) : ViewModel() {
 
     init {
@@ -71,12 +75,25 @@ class HabitListViewModel  @Inject constructor(
         )
 
     fun toggleHabitCompletion(habitId: Int) {
-        viewModelScope.launch {
+        applicationScope.launch {
             habitRepository.toggleHabitCompletion(
                 habitId = habitId,
                 date = _selectedDate.value
             )
+
+            val allCompleted = checkIfAllHabitsCompleted()
+            if (allCompleted) {
+                achievementManager.onAllHabitsCompleted()
+            }
         }
+    }
+
+    private suspend fun checkIfAllHabitsCompleted(): Boolean {
+        val today = LocalDate.now()
+        val todayHabits = habitRepository.getHabitsForDayOnce(today.dayOfWeek.name)
+        val todayLogs = habitRepository.getLogsForDateOnce(today)
+        val completedIds = todayLogs.filter { it.isCompleted }.map { it.habitId }.toSet()
+        return todayHabits.isNotEmpty() && todayHabits.all { it.id in completedIds }
     }
 
     fun onDateSelected(date: LocalDate) {

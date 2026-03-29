@@ -38,4 +38,8 @@ interface HabitRepository {
         startDate: LocalDate,
         endDate: LocalDate
     ): List<HabitStatEntry>
+
+    // Для достижений
+    suspend fun getHabitsForDayOnce(dayName: String): List<Habit>
+    suspend fun getLogsForDateOnce(date: LocalDate): List<HabitLog>
 }

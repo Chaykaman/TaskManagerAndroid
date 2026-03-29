@@ -181,4 +181,18 @@ class HabitRepositoryImpl @Inject constructor(
         startDate: LocalDate,
         endDate: LocalDate
     ): List<HabitStatEntry> = habitDao.getHabitStatsForPeriod(startDate, endDate)
+
+    /**
+     * Получить привычки для конкретного дня.
+     * @param dayName название дня
+     */
+    override suspend fun getHabitsForDayOnce(dayName: String): List<Habit> =
+        habitDao.getHabitsForDayOnce(dayName)
+
+    /**
+     * Получить логи привычки за конкретную дату.
+     * @param date дата
+     */
+    override suspend fun getLogsForDateOnce(date: LocalDate): List<HabitLog> =
+        habitDao.getLogsForDateOnce(date)
 }

@@ -10,9 +10,11 @@ import com.example.taskmanager.data.local.entity.TaskFiltering
 import com.example.taskmanager.data.local.entity.TaskGrouping
 import com.example.taskmanager.data.local.entity.TaskSorting
 import com.example.taskmanager.data.logger.TaskLogger
+import com.example.taskmanager.data.repository.AchievementManager
 import com.example.taskmanager.data.repository.DisplayOptionsRepository
 import com.example.taskmanager.data.repository.TaskRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
@@ -31,7 +33,9 @@ import javax.inject.Inject
 @HiltViewModel
 class TaskListViewModel @Inject constructor(
     private val taskRepository: TaskRepository,
-    private val optionsRepository: DisplayOptionsRepository
+    private val optionsRepository: DisplayOptionsRepository,
+    private val achievementManager: AchievementManager,
+    private val applicationScope: CoroutineScope
 ) : ViewModel() {
 
     init {
@@ -164,9 +168,14 @@ class TaskListViewModel @Inject constructor(
             dueTime = dueTime
         )
 
-        // Добавляем задачу
-        viewModelScope.launch {
+        // Добавляем задачу и обновляем прогресс выполнения
+        // applicationScope живёт дольше, чем viewModelScope, который уничтожается после закрытия
+        // страницы (из-за этого achievementManager падает с ошибкой). Поэтому всё записываем
+        // в applicationScope, чтобы задача добавилась, прогресс засчитался и чтобы всё
+        // это происходило последовательно.
+        applicationScope.launch {
             taskRepository.addTask(newTask)
+            achievementManager.onTaskCreated()
         }
     }
 
@@ -175,10 +184,18 @@ class TaskListViewModel @Inject constructor(
      * @param task Обновлённая задача
      */
     fun toggleTaskCompletion(task: Task) {
-        viewModelScope.launch {
-            taskRepository.updateTask(
-                task = task.copy(isCompleted = !task.isCompleted)
-            )
+        val updatedTask = task.copy(
+            isCompleted = !task.isCompleted,
+            completedAt = if (!task.isCompleted) LocalDate.now() else null
+        )
+
+        // Обновляем задачу и обновляем прогресс выполнения, если задача выполнена
+        applicationScope.launch {
+            taskRepository.updateTask(updatedTask)
+
+            if (updatedTask.isCompleted) {
+                achievementManager.onTaskCompleted()
+            }
         }
     }
 
