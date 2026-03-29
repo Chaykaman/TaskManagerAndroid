@@ -1,10 +1,10 @@
 package com.example.taskmanager.data.local.entity
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Block
-import androidx.compose.material.icons.filled.Flag
-import androidx.compose.material.icons.filled.TextFields
-import androidx.compose.material.icons.filled.Today
+import androidx.compose.material.icons.rounded.Block
+import androidx.compose.material.icons.rounded.Flag
+import androidx.compose.material.icons.rounded.TextFields
+import androidx.compose.material.icons.rounded.Today
 import androidx.compose.ui.graphics.vector.ImageVector
 
 enum class TaskGrouping(
@@ -12,19 +12,19 @@ enum class TaskGrouping(
     val label: String
 ) {
     NONE(
-        icon = Icons.Default.Block,
+        icon = Icons.Rounded.Block,
         label = "Без группировки"
     ),
     TITLE(
-        icon = Icons.Default.TextFields,
+        icon = Icons.Rounded.TextFields,
         label = "По названию"
     ),
     DUE_DATE(
-        icon = Icons.Default.Today,
+        icon = Icons.Rounded.Today,
         label = "По дате выполнения"
     ),
     PRIORITY(
-        icon = Icons.Default.Flag,
+        icon = Icons.Rounded.Flag,
         label = "По приоритету"
     )
 }

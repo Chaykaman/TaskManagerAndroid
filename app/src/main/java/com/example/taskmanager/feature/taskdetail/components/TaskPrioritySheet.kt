@@ -9,9 +9,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Flag
-import androidx.compose.material.icons.outlined.Flag
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.Flag
+import androidx.compose.material.icons.rounded.OutlinedFlag
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -48,7 +48,7 @@ fun TaskPrioritySheet(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 IconField(
-                    icon = if (isSelected) Icons.Filled.Flag else Icons.Outlined.Flag,
+                    icon = if (isSelected) Icons.Rounded.Flag else Icons.Rounded.OutlinedFlag,
                     tint = priorityItem.color
                 )
 
@@ -59,7 +59,7 @@ fun TaskPrioritySheet(
                 )
 
                 if (isSelected) {
-                    IconField(icon = Icons.Default.Check)
+                    IconField(icon = Icons.Rounded.Check)
                 }
             }
         }

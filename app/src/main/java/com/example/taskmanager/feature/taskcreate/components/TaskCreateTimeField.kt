@@ -1,7 +1,7 @@
 package com.example.taskmanager.feature.taskcreate.components
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.rounded.AccessTime
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,7 +29,7 @@ fun TaskCreateTimeField(
                 ) ?: "Время"
             )
         },
-        icon = Icons.Default.AccessTime,
+        icon = Icons.Rounded.AccessTime,
         isActive = dueTime != null
     )
 

@@ -4,9 +4,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Flag
-import androidx.compose.material.icons.outlined.Flag
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.Flag
+import androidx.compose.material.icons.rounded.OutlinedFlag
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.DropdownMenu
@@ -40,7 +40,7 @@ fun TaskCreatePriorityField(
             },
             leadingIcon = {
                 Icon(
-                    imageVector = Icons.Default.Flag,
+                    imageVector = Icons.Rounded.Flag,
                     contentDescription = priority.label,
                     modifier = Modifier.size(AssistChipDefaults.IconSize)
                 )
@@ -65,7 +65,7 @@ fun TaskCreatePriorityField(
                     leadingIcon = {
                         Icon(
                             imageVector = if (priorityItem == priority)
-                                Icons.Default.Flag else Icons.Outlined.Flag,
+                                Icons.Rounded.Flag else Icons.Rounded.OutlinedFlag,
                             contentDescription = "Приоритет",
                             tint = priorityItem.color
                         )
@@ -73,7 +73,7 @@ fun TaskCreatePriorityField(
                     trailingIcon = {
                         if (priorityItem == priority) {
                             Icon(
-                                imageVector = Icons.Default.Check,
+                                imageVector = Icons.Rounded.Check,
                                 contentDescription = "Выбран",
                                 modifier = Modifier.size(AssistChipDefaults.IconSize)
                             )

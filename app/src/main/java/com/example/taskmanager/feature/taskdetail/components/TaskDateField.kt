@@ -1,8 +1,8 @@
 package com.example.taskmanager.feature.taskdetail.components
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.EditCalendar
+import androidx.compose.material.icons.rounded.CalendarMonth
+import androidx.compose.material.icons.rounded.EditCalendar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,7 +20,7 @@ fun TaskDateField(
     var showDatePicker by remember { mutableStateOf(false) }
 
     RowField {
-        IconField(icon = Icons.Filled.EditCalendar)
+        IconField(icon = Icons.Rounded.EditCalendar)
 
         ChipField(
             onClick = { showDatePicker = true },
@@ -31,7 +31,7 @@ fun TaskDateField(
                     ) ?: "Выбрать дату"
                 )
             },
-            icon = Icons.Filled.CalendarMonth,
+            icon = Icons.Rounded.CalendarMonth,
             isActive = dueDate != null
         )
 

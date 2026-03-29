@@ -4,9 +4,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.LightMode
-import androidx.compose.material.icons.filled.Smartphone
+import androidx.compose.material.icons.rounded.DarkMode
+import androidx.compose.material.icons.rounded.LightMode
+import androidx.compose.material.icons.rounded.Smartphone
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,21 +26,21 @@ fun AppThemeOptions(
         SettingsOptionCard(
             modifier = Modifier.weight(1f),
             text = "Светлая",
-            icon = Icons.Default.LightMode,
+            icon = Icons.Rounded.LightMode,
             isActive = activeAppTheme == AppTheme.LIGHT,
             onThemeClick = { onThemeChange(AppTheme.LIGHT) }
         )
         SettingsOptionCard(
             modifier = Modifier.weight(1f),
             text = "Тёмная",
-            icon = Icons.Default.DarkMode,
+            icon = Icons.Rounded.DarkMode,
             isActive = activeAppTheme == AppTheme.DARK,
             onThemeClick = { onThemeChange(AppTheme.DARK) }
         )
         SettingsOptionCard(
             modifier = Modifier.weight(1f),
             text = "Авто",
-            icon = Icons.Default.Smartphone,
+            icon = Icons.Rounded.Smartphone,
             isActive = activeAppTheme == AppTheme.SYSTEM,
             onThemeClick = { onThemeChange(AppTheme.SYSTEM) }
         )
