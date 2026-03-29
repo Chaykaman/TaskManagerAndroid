@@ -93,7 +93,6 @@ Task Manager — это мобильное приложение-планиров
 | yaluknov              | UI, навигация, экраны задач |
 | aiui338 | Аналитика, достижения |
 
-
 ## 📱 Скриншоты
 
 Главное меню
@@ -101,6 +100,7 @@ Task Manager — это мобильное приложение-планиров
 <img src="imgforReadMe/mainmenu.jpg" width="220"/>
 
 Просмотр задач по календарю
+
 
 <img src="imgforReadMe/calendar.jpg" width="220"/>
 
