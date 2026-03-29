@@ -102,7 +102,7 @@ Task Manager — это мобильное приложение-планиров
 Просмотр задач по календарю
 
 
-<img src="imgforReadMe/calendar.jpg" width="220"/>
+<img src="imgforReadMe/calendare.jpg" width="220"/>
 
 Страница привычек
 
